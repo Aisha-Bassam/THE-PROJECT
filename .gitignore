@@ -1,0 +1,3 @@
+# Ignore only large data files (keep folder structures)
+*.csv
+*.pkl
