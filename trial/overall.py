@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("trial/uk_weather_data.csv")
+df = pd.read_csv("data/uk_weather_data.csv")
 
 # Basic shape
 print("Shape:", df.shape)
