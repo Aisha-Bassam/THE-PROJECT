@@ -12,8 +12,7 @@
   <style>
     /* ─── Design tokens: rainy morning palette ──────────────────────── */
     :root {
-      /* --bg-top:      #2C4A6E; */
-      --bg-top:      #2964ab;
+      --bg-top:      #2C4A6E;
       --bg-bot:      #1A2E45;
       --card-bg:     rgba(255, 255, 255, 0.10);
       --card-border: rgba(255, 255, 255, 0.16);
@@ -138,17 +137,24 @@
       font-size: 3.8rem;
       line-height: 1;
       cursor: pointer;
-      background: none;
-      border: none;
+      background: rgba(255,255,255,0.10);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
       padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      transition: transform 0.2s ease;
+      justify-content: center;
+      gap: 3px;
+      transition: transform 0.2s ease, background 0.2s ease;
       flex-shrink: 0;
     }
-    .condition-icon-btn:hover { transform: scale(1.07); }
+    .condition-icon-btn:hover {
+      transform: scale(1.07);
+      background: rgba(255,255,255,0.17);
+    }
 
     .icon-hint {
       font-family: 'Outfit', sans-serif;
@@ -241,8 +247,16 @@
     }
     .fox-wrapper:hover::after { opacity: 0.45; transform: scale(1.05); }
 
-    .fox-emotion-btn {
+    /* Wrapper makes emotion popup anchor to the button, not to fox-col */
+    .emotion-wrap {
+      position: relative;
       margin-top: 16px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .fox-emotion-btn {
       font-size: 0.77rem;
       font-weight: 500;
       color: var(--text-white);
@@ -252,7 +266,6 @@
       border-radius: 20px;
       cursor: pointer;
       transition: background 0.2s ease;
-      position: relative;
     }
     .fox-emotion-btn:hover { background: rgba(255,255,255,0.22); }
 
@@ -358,23 +371,29 @@
      * that users systematically ignored or misread numerical confidence
      * indicators in existing weather apps.
      */
+    /*
+     * DISSERTATION NOTE (Ch7 — Implementation):
+     * emotionPopup is now anchored to .emotion-wrap (the button's wrapper)
+     * via position:absolute + bottom: calc(100% + 10px), so it always
+     * floats above the button regardless of scroll position or page height.
+     * Arrow points downward toward the button.
+     */
     #emotionPopup {
       width: 210px;
-      bottom: 12px;
+      bottom: calc(100% + 10px);
       left: 50%;
       transform: translateX(-50%);
       top: auto;
     }
-    /* reposition dynamically via JS — default below button */
-    #emotionPopup::before {
+    #emotionPopup::after {
       content: '';
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      top: -8px;
+      bottom: -8px;
       border-left: 7px solid transparent;
       border-right: 7px solid transparent;
-      border-bottom: 8px solid var(--popup-bg);
+      border-top: 8px solid var(--popup-bg);
     }
 
     /* ─── 7-day forecast ────────────────────────────────────────────── */
@@ -439,11 +458,11 @@
       padding: 2px 8px;
       border-radius: 20px;
     }
-    .today-badge     { background: #e8c29b; color: #1A2E45; }
+    .today-badge     { background: var(--fox-amber); color: #1A2E45; }
     .yesterday-badge { background: rgba(255,255,255,0.15); color: var(--text-dim); }
 
     .cond-icon { font-size: 1.25rem; }
-ß
+
     .temp-high { color: var(--fox-amber); font-weight: 500; }
     .temp-low  { color: #9FC8E8; font-weight: 500; }
 
@@ -561,26 +580,28 @@
           </div>
         </div>
 
-        <!-- Emotion tag -->
-        <button class="fox-emotion-btn" id="emotionTrigger" aria-label="See confidence">
-          😐 Neutral
-        </button>
+        <!-- Emotion tag + popup wrapped together so popup anchors to button -->
+        <div class="emotion-wrap">
+          <button class="fox-emotion-btn" id="emotionTrigger" aria-label="See confidence">
+            😐 Neutral
+          </button>
 
-        <!--
-          Emotion popup — confidence in plain language.
-          DISSERTATION NOTE (Ch6 — Design):
-          Replaces the v0.1 progress bar. Plain-language confidence framed
-          as the fox speaking is more accessible for non-expert users.
-        -->
-        <div class="popup" id="emotionPopup">
-          <div class="popup-header">
-            <div class="popup-title">Fox says</div>
-            <button class="popup-close" data-close="emotionPopup">✕</button>
-          </div>
-          <div class="popup-body">
-            I'm <strong>50% sure</strong> it will be a rainy day.
-            Conditions are borderline — there's a real chance it stays
-            dry in the afternoon.
+          <!--
+            Emotion popup — confidence in plain language.
+            DISSERTATION NOTE (Ch6 — Design):
+            Replaces the v0.1 progress bar. Plain-language confidence framed
+            as the fox speaking is more accessible for non-expert users.
+          -->
+          <div class="popup" id="emotionPopup">
+            <div class="popup-header">
+              <div class="popup-title">Fox says</div>
+              <button class="popup-close" data-close="emotionPopup">✕</button>
+            </div>
+            <div class="popup-body">
+              I'm <strong>50% sure</strong> it will be a rainy day.
+              Conditions are borderline — there's a real chance it stays
+              dry in the afternoon.
+            </div>
           </div>
         </div>
 
@@ -687,17 +708,7 @@
       btn.addEventListener('click', (e) => { e.stopPropagation(); closeAll(); });
     });
 
-    // Position emotionPopup below the emotion button dynamically
-    const emotionBtn = document.getElementById('emotionTrigger');
-    const emotionPop = document.getElementById('emotionPopup');
-    emotionBtn.addEventListener('click', () => {
-      if (emotionPop.classList.contains('visible')) {
-        const btnRect = emotionBtn.getBoundingClientRect();
-        const colRect = emotionBtn.closest('.fox-col').getBoundingClientRect();
-        emotionPop.style.top  = (btnRect.bottom - colRect.top + 10) + 'px';
-        emotionPop.style.bottom = 'auto';
-      }
-    });
+    // emotionPopup positioning handled entirely via CSS (.emotion-wrap)
 
     document.addEventListener('click', () => closeAll());
   </script>
