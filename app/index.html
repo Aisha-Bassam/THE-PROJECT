@@ -5,41 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WeatherFox</title>
 
-  <!-- Fonts: Fraunces (display) + Outfit (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* ─── Design tokens ─────────────────────────────────────────────── */
+    /* ─── Design tokens: rainy morning palette ──────────────────────── */
     :root {
-      --fox-orange:   #D4622A;
-      --fox-amber:    #F0A04B;
-      --sky-blue:     #4A7FA5;
-      --sky-light:    #D6EAF8;
-      --cream:        #FAF7F2;
-      --warm-grey:    #E8E2D9;
-      --text-dark:    #2C2417;
-      --text-mid:     #6B5E4E;
-      --text-light:   #9E9086;
-      --card-bg:      #FFFFFF;
-      --card-shadow:  0 2px 16px rgba(44, 36, 23, 0.08);
-      --radius-lg:    16px;
-      --radius-md:    10px;
-      --radius-sm:    6px;
+      --bg-top:      #2C4A6E;
+      --bg-bot:      #1A2E45;
+      --card-bg:     rgba(255, 255, 255, 0.10);
+      --card-border: rgba(255, 255, 255, 0.16);
+      --text-white:  #FFFFFF;
+      --text-dim:    rgba(255,255,255,0.6);
+      --text-dimmer: rgba(255,255,255,0.35);
+      --fox-amber:   #F0A04B;
+      --popup-bg:    #FFFFFF;
+      --popup-text:  #1A2E45;
+      --popup-sub:   #4A6A8A;
+      --radius-lg:   20px;
+      --radius-md:   12px;
+      --shadow:      0 8px 40px rgba(0,0,0,0.28);
+      --shadow-pop:  0 8px 28px rgba(0,0,0,0.18);
     }
 
-    /* ─── Reset & base ──────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Outfit', sans-serif;
-      background-color: var(--cream);
-      color: var(--text-dark);
       min-height: 100vh;
-      /* Subtle paper texture via gradient noise */
-      background-image: radial-gradient(ellipse at 20% 50%, rgba(212, 98, 42, 0.04) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 20%, rgba(74, 127, 165, 0.05) 0%, transparent 60%);
+      background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bot) 100%);
+      color: var(--text-white);
     }
 
     /* ─── Header ────────────────────────────────────────────────────── */
@@ -47,474 +43,419 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 40px;
-      border-bottom: 1px solid var(--warm-grey);
-      background: rgba(250, 247, 242, 0.85);
-      backdrop-filter: blur(8px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 18px 44px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .logo {
       font-family: 'Fraunces', serif;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 600;
-      color: var(--fox-orange);
+      color: var(--fox-amber);
       letter-spacing: -0.02em;
     }
+    .logo span { color: var(--text-white); }
 
-    .logo span {
-      color: var(--text-dark);
-    }
+    .header-meta { font-size: 0.78rem; color: var(--text-dim); font-weight: 300; }
 
-    .header-meta {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      font-weight: 300;
-    }
-
-    /* ─── Main layout ───────────────────────────────────────────────── */
+    /* ─── Main ──────────────────────────────────────────────────────── */
     main {
-      max-width: 1100px;
+      max-width: 1060px;
       margin: 0 auto;
-      padding: 36px 40px 60px;
+      padding: 36px 44px 60px;
     }
 
-    /* Two-column top section */
-    .top-section {
+    /* ─── Combined card ─────────────────────────────────────────────── */
+    /*
+     * DISSERTATION NOTE (Ch6 — Design):
+     * Weather panel and fox are in a single card to reinforce that both
+     * are outputs of the same prediction pipeline. The internal divider
+     * separates data (left) from interpretation (right) without
+     * fragmenting them into separate visual objects.
+     */
+    .main-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      align-items: start;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
+      position: relative;
     }
 
-    /* ─── Weather panel (left) ──────────────────────────────────────── */
-    .weather-panel {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--card-shadow);
-      padding: 32px;
-      border: 1px solid var(--warm-grey);
+    .main-card::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 8%;
+      height: 84%;
+      width: 1px;
+      background: var(--card-border);
+      pointer-events: none;
     }
+
+    /* ─── Weather column (left) ─────────────────────────────────────── */
+    .weather-col { padding: 36px 32px; }
 
     .panel-label {
-      font-size: 0.7rem;
+      font-size: 0.67rem;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--text-light);
-      margin-bottom: 20px;
-    }
-
-    .location-row {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 8px;
+      color: var(--text-dim);
+      margin-bottom: 14px;
     }
 
     .location-name {
       font-family: 'Fraunces', serif;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 600;
-      color: var(--text-dark);
       letter-spacing: -0.02em;
+      line-height: 1;
     }
 
     .date-tag {
-      font-size: 0.78rem;
-      background: var(--sky-light);
-      color: var(--sky-blue);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      font-weight: 300;
+      margin-top: 4px;
+      margin-bottom: 28px;
     }
 
+    /* Clickable icon row */
     .condition-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin: 20px 0;
+      gap: 18px;
+      margin-bottom: 28px;
+      position: relative; /* anchor for icon popup */
     }
 
-    .condition-icon {
-      font-size: 3rem;
+    .condition-icon-btn {
+      font-size: 3.8rem;
       line-height: 1;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    .condition-icon-btn:hover { transform: scale(1.07); }
+
+    .icon-hint {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text-dimmer);
+      white-space: nowrap;
     }
 
     .condition-temp {
       font-family: 'Fraunces', serif;
-      font-size: 3.4rem;
-      font-weight: 400;
-      color: var(--text-dark);
-      letter-spacing: -0.04em;
+      font-size: 4rem;
+      font-weight: 300;
+      letter-spacing: -0.05em;
       line-height: 1;
     }
 
     .condition-label {
-      font-size: 1rem;
-      color: var(--text-mid);
+      font-size: 0.9rem;
+      color: var(--text-dim);
       font-weight: 300;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .weather-details {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid var(--warm-grey);
-    }
-
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      gap: 14px;
+      padding-top: 22px;
+      border-top: 1px solid var(--card-border);
     }
 
     .detail-label {
-      font-size: 0.7rem;
+      font-size: 0.64rem;
       font-weight: 600;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--text-light);
+      color: var(--text-dimmer);
+      margin-bottom: 3px;
     }
 
-    .detail-value {
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-dark);
-    }
+    .detail-value { font-size: 0.96rem; font-weight: 500; }
 
-    /* Confidence badge */
-    .confidence-row {
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .confidence-bar-wrap {
-      flex: 1;
-      height: 6px;
-      background: var(--warm-grey);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .confidence-bar-fill {
-      height: 100%;
-      width: 72%; /* placeholder */
-      background: linear-gradient(90deg, var(--fox-amber), var(--fox-orange));
-      border-radius: 3px;
-      transition: width 0.4s ease;
-    }
-
-    .confidence-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--fox-orange);
-      white-space: nowrap;
-    }
-
-    /* ─── Fox panel (right) ─────────────────────────────────────────── */
-    .fox-panel {
-      position: relative;
+    /* ─── Fox column (right) ────────────────────────────────────────── */
+    .fox-col {
+      padding: 36px 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--card-shadow);
-      border: 1px solid var(--warm-grey);
-      padding: 32px 24px;
-      min-height: 360px;
+      position: relative; /* anchor for xai popup */
     }
 
     .fox-prompt {
-      font-size: 0.72rem;
+      font-size: 0.67rem;
       font-weight: 500;
-      color: var(--text-light);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-bottom: 16px;
+      color: var(--text-dim);
+      margin-bottom: 18px;
     }
 
     .fox-wrapper {
-      position: relative;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .fox-wrapper:hover .fox-img {
-      transform: scale(1.03);
+      position: relative;
     }
 
     .fox-img {
-      width: 200px;
-      height: 200px;
+      width: 185px;
+      height: 185px;
       object-fit: contain;
-      transition: transform 0.25s ease;
       border-radius: 50%;
-      background: var(--cream);
-      border: 3px solid var(--warm-grey);
+      background: rgba(255,255,255,0.06);
+      border: 2px solid rgba(255,255,255,0.15);
+      transition: transform 0.25s ease;
+      display: block;
     }
+    .fox-wrapper:hover .fox-img { transform: scale(1.04); }
 
-    /* Pulse ring on hover */
     .fox-wrapper::after {
       content: '';
       position: absolute;
-      width: 200px;
-      height: 200px;
+      inset: -5px;
       border-radius: 50%;
-      border: 2px solid var(--fox-orange);
+      border: 2px solid var(--fox-amber);
       opacity: 0;
-      transform: scale(1);
       transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
     }
+    .fox-wrapper:hover::after { opacity: 0.45; transform: scale(1.05); }
 
-    .fox-wrapper:hover::after {
-      opacity: 0.4;
-      transform: scale(1.08);
-    }
-
-    .fox-emotion-tag {
-      margin-top: 14px;
-      font-size: 0.78rem;
+    .fox-emotion-btn {
+      margin-top: 16px;
+      font-size: 0.77rem;
       font-weight: 500;
-      color: var(--text-mid);
-      background: var(--warm-grey);
-      padding: 4px 14px;
+      color: var(--text-white);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 16px;
       border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      position: relative;
     }
+    .fox-emotion-btn:hover { background: rgba(255,255,255,0.22); }
 
-    /* ─── XAI pop-up (floats left of fox panel) ─────────────────────── */
-    /*
-     * The pop-up is positioned absolutely relative to the .top-section grid.
-     * It appears to the left of the fox panel — overlapping the right side
-     * of the weather panel — when the fox is clicked.
-     */
-    .xai-popup {
-      display: none; /* hidden by default */
+    /* ─── Pop-ups: shared ───────────────────────────────────────────── */
+    .popup {
+      display: none;
       position: absolute;
-      /* Positioned from the right edge of the grid — sits between the two columns */
-      right: calc(50% + 10px); /* right side = left of fox column */
-      top: 50%;
-      transform: translateY(-50%);
-      width: 240px;
-      background: var(--card-bg);
-      border: 1.5px solid var(--fox-orange);
+      background: var(--popup-bg);
       border-radius: var(--radius-md);
-      box-shadow: 0 8px 32px rgba(212, 98, 42, 0.15);
-      padding: 18px 20px;
-      z-index: 50;
-      animation: popIn 0.2s ease;
+      box-shadow: var(--shadow-pop);
+      padding: 15px 17px;
+      z-index: 300;
+      color: var(--popup-text);
+      animation: popIn 0.17s ease;
     }
-
-    .xai-popup.visible {
-      display: block;
-    }
+    .popup.visible { display: block; }
 
     @keyframes popIn {
-      from { opacity: 0; transform: translateY(-50%) scale(0.95); }
-      to   { opacity: 1; transform: translateY(-50%) scale(1); }
+      from { opacity: 0; transform: scale(0.93); }
+      to   { opacity: 1; transform: scale(1); }
     }
 
-    .xai-popup-header {
+    .popup-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 8px;
     }
 
-    .xai-popup-title {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+    .popup-title {
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
-      color: var(--fox-orange);
+      color: var(--popup-sub);
     }
 
-    .xai-close-btn {
+    .popup-close {
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1rem;
-      color: var(--text-light);
+      font-size: 0.88rem;
+      color: #aaa;
       line-height: 1;
       padding: 0;
+      flex-shrink: 0;
     }
+    .popup-close:hover { color: var(--popup-text); }
 
-    .xai-close-btn:hover { color: var(--text-dark); }
-
-    .xai-popup-body {
-      font-size: 0.85rem;
-      line-height: 1.55;
-      color: var(--text-mid);
+    .popup-body {
+      font-size: 0.83rem;
+      line-height: 1.56;
+      color: var(--popup-sub);
     }
+    .popup-body strong { color: var(--popup-text); font-weight: 600; }
 
-    .xai-popup-body strong {
-      color: var(--text-dark);
-      font-weight: 600;
-    }
-
-    /* Small arrow pointing right (towards the fox) */
-    .xai-popup::after {
-      content: '';
-      position: absolute;
-      right: -9px;
+    /* ── XAI popup: left of fox column, anchored to .main-card ─────── */
+    /*
+     * DISSERTATION NOTE (Ch7 — Implementation):
+     * right: 53% places the popup left of the centre divider.
+     * The arrow points right toward the fox, making the causal direction
+     * (fox → explanation) visually explicit.
+     */
+    #xaiPopup {
+      width: 228px;
+      right: 53%;
       top: 50%;
       transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-left: 8px solid var(--fox-orange);
+    }
+    #xaiPopup::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 8px solid var(--popup-bg);
     }
 
-    /* ─── 7-day forecast table ──────────────────────────────────────── */
-    .forecast-section {
+    /* ── Icon popup: below the icon, anchored to .condition-row ─────── */
+    #iconPopup {
+      width: 244px;
+      left: 0;
+      top: calc(100% + 12px);
+    }
+    #iconPopup::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      top: -8px;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 8px solid var(--popup-bg);
+    }
+
+    /* ── Emotion popup: below emotion button, anchored to .fox-col ──── */
+    /*
+     * DISSERTATION NOTE (Ch6 — Design):
+     * Confidence expressed as first-person fox speech ("I'm X% sure…")
+     * rather than a progress bar. Designed in response to survey finding
+     * that users systematically ignored or misread numerical confidence
+     * indicators in existing weather apps.
+     */
+    #emotionPopup {
+      width: 210px;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      top: auto;
+    }
+    /* reposition dynamically via JS — default below button */
+    #emotionPopup::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -8px;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 8px solid var(--popup-bg);
+    }
+
+    /* ─── 7-day forecast ────────────────────────────────────────────── */
+    .forecast-card {
       background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      box-shadow: var(--card-shadow);
-      border: 1px solid var(--warm-grey);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
       overflow: hidden;
     }
 
-    .forecast-header {
-      padding: 20px 28px 0;
-    }
+    .forecast-card-header { padding: 20px 28px 0; }
 
-    .forecast-title {
-      font-size: 0.7rem;
+    .forecast-card-title {
+      font-size: 0.67rem;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--text-light);
+      color: var(--text-dim);
     }
 
     .forecast-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 16px;
-      font-size: 0.88rem;
+      margin-top: 14px;
+      font-size: 0.86rem;
     }
 
     .forecast-table thead th {
       text-align: left;
       padding: 10px 28px;
-      font-size: 0.68rem;
+      font-size: 0.63rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--text-light);
-      border-bottom: 1px solid var(--warm-grey);
+      color: var(--text-dimmer);
+      border-bottom: 1px solid var(--card-border);
     }
 
     .forecast-table tbody tr {
-      border-bottom: 1px solid var(--warm-grey);
-      transition: background 0.15s ease;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.14s ease;
     }
-
-    .forecast-table tbody tr:last-child {
-      border-bottom: none;
-    }
-
-    .forecast-table tbody tr:hover {
-      background: var(--cream);
-    }
-
-    /* Highlight "Today" row */
-    .forecast-table tbody tr.today-row {
-      background: rgba(212, 98, 42, 0.04);
-    }
-
-    .forecast-table tbody tr.today-row td {
-      font-weight: 500;
-    }
+    .forecast-table tbody tr:last-child { border-bottom: none; }
+    .forecast-table tbody tr:hover { background: rgba(255,255,255,0.05); }
+    .forecast-table tbody tr.today-row { background: rgba(255, 255, 255, 0.09); }
 
     .forecast-table tbody td {
-      padding: 14px 28px;
-      color: var(--text-dark);
+      padding: 13px 28px;
+      color: var(--text-white);
+      vertical-align: middle;
     }
 
-    .day-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .day-label { display: flex; align-items: center; gap: 10px; }
 
-    .today-badge {
-      font-size: 0.62rem;
+    .today-badge, .yesterday-badge {
+      font-size: 0.59rem;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: var(--fox-orange);
-      color: white;
       padding: 2px 8px;
       border-radius: 20px;
     }
+    .today-badge     { background: #e8c29b; color: #1A2E45; }
+    .yesterday-badge { background: rgba(255,255,255,0.15); color: var(--text-dim); }
 
-    .yesterday-badge {
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: var(--warm-grey);
-      color: var(--text-mid);
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
+    .cond-icon { font-size: 1.25rem; }
 
-    .temp-high { color: var(--fox-orange); font-weight: 500; }
-    .temp-low  { color: var(--sky-blue);   font-weight: 500; }
+    .temp-high { color: var(--fox-amber); font-weight: 500; }
+    .temp-low  { color: #9FC8E8; font-weight: 500; }
 
-    .rain-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.82rem;
-    }
+    .rain-pill { display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim); }
+    .rain-dot  { width: 8px; height: 8px; border-radius: 50%; background: #9FC8E8; }
+    .rain-dot.high { opacity: 1.0; }
+    .rain-dot.med  { opacity: 0.55; }
+    .rain-dot.low  { opacity: 0.25; }
 
-    .rain-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--sky-blue);
-      opacity: 0.5;
-    }
-
-    .rain-dot.high { opacity: 1; background: var(--sky-blue); }
-    .rain-dot.med  { opacity: 0.65; }
-    .rain-dot.low  { opacity: 0.3; }
-
-    /* ─── Responsive tweak ──────────────────────────────────────────── */
-    @media (max-width: 720px) {
-      .top-section { grid-template-columns: 1fr; }
-      .xai-popup {
-        right: auto;
-        left: 50%;
-        top: auto;
-        bottom: calc(100% + 12px);
-        transform: translateX(-50%);
-      }
-      .xai-popup::after {
-        right: auto;
-        left: 50%;
-        top: 100%;
-        bottom: auto;
-        transform: translateX(-50%);
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-top: 8px solid var(--fox-orange);
-        border-bottom: none;
-      }
+    /* ─── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .main-card { grid-template-columns: 1fr; }
+      .main-card::after { display: none; }
       main { padding: 24px 20px 48px; }
       header { padding: 14px 20px; }
     }
@@ -523,29 +464,48 @@
 
 <body>
 
-  <!-- ── Header ─────────────────────────────────────────────────────── -->
   <header>
     <div class="logo">Weather<span>Fox</span></div>
     <div class="header-meta">London · Prototype v0.1</div>
   </header>
 
-  <!-- ── Main ───────────────────────────────────────────────────────── -->
   <main>
 
-    <!-- Top two-column section — position:relative so pop-up can anchor -->
-    <div class="top-section" style="position: relative;">
+    <!-- ── Combined card ──────────────────────────────────────────── -->
+    <div class="main-card">
 
-      <!-- ── LEFT: Weather panel ───────────────────────────────────── -->
-      <div class="weather-panel">
+      <!-- LEFT: weather -->
+      <div class="weather-col">
         <div class="panel-label">Today's Forecast</div>
-
-        <div class="location-row">
-          <div class="location-name">London</div>
-          <div class="date-tag">Wednesday, 22 Apr</div>
-        </div>
+        <div class="location-name">London</div>
+        <div class="date-tag">Wednesday, 22 April 2026</div>
 
         <div class="condition-row">
-          <div class="condition-icon">🌧️</div>
+          <button class="condition-icon-btn" id="iconTrigger"
+                  aria-label="Click for weather explanation">
+            🌧️
+            <span class="icon-hint">tap for insight</span>
+          </button>
+
+          <!--
+            Icon pop-up.
+            DISSERTATION NOTE (Ch6 — Design): Two entry points into XAI —
+            icon (weather-first) and fox (character-first) — accommodate
+            different user mental models identified in the needs-finding survey.
+          -->
+          <div class="popup" id="iconPopup">
+            <div class="popup-header">
+              <div class="popup-title">Why rainy today?</div>
+              <button class="popup-close" data-close="iconPopup">✕</button>
+            </div>
+            <div class="popup-body">
+              <strong>Yesterday's conditions point to rain.</strong>
+              High humidity (87%), falling pressure, and an easterly wind
+              pattern are the main signals. The model weighted humidity
+              most heavily.
+            </div>
+          </div>
+
           <div>
             <div class="condition-temp">12°C</div>
             <div class="condition-label">Rainy</div>
@@ -553,248 +513,192 @@
         </div>
 
         <div class="weather-details">
-          <div class="detail-item">
+          <div>
             <div class="detail-label">Wind</div>
             <div class="detail-value">18 km/h</div>
           </div>
-          <div class="detail-item">
+          <div>
             <div class="detail-label">Humidity</div>
             <div class="detail-value">84%</div>
           </div>
-          <div class="detail-item">
+          <div>
             <div class="detail-label">Rain chance</div>
             <div class="detail-value">74%</div>
           </div>
-          <div class="detail-item">
+          <div>
             <div class="detail-label">Feels like</div>
             <div class="detail-value">9°C</div>
           </div>
         </div>
-
-        <!-- Confidence indicator — will be driven by model output later -->
-        <div class="confidence-row">
-          <div class="confidence-bar-wrap">
-            <div class="confidence-bar-fill"></div>
-          </div>
-          <div class="confidence-label">Medium confidence</div>
-        </div>
       </div>
-      <!-- end weather panel -->
 
-      <!-- ── RIGHT: Fox panel ──────────────────────────────────────── -->
-      <div class="fox-panel">
+      <!-- RIGHT: fox -->
+      <div class="fox-col">
         <div class="fox-prompt">Tap the fox to see why</div>
 
         <div class="fox-wrapper" id="foxTrigger" role="button" tabindex="0"
-             aria-label="Click to see weather explanation">
-          <!--
-            foxdraft.svg lives at app/static/foxdraft.svg.
-            When Flask is added, this src will become {{ url_for('static', filename='foxdraft.svg') }}.
-            For now the relative path assumes index.html is at app/ level.
-          -->
+             aria-label="Click to see outfit explanation">
+          <!-- When Flask added: {{ url_for('static', filename='foxdraft.svg') }} -->
           <img src="static/foxdraft.svg" alt="WeatherFox character" class="fox-img"
-               onerror="this.style.background='#F0A04B'; this.alt='Fox placeholder';" />
+               onerror="this.style.background='rgba(240,160,75,0.25)';" />
         </div>
 
-        <div class="fox-emotion-tag" id="foxEmotion">😐 Neutral</div>
-
-        <!-- ── XAI pop-up ──────────────────────────────────────────── -->
         <!--
-          DISSERTATION NOTE (Ch7 — Implementation):
-          The pop-up is positioned to the left of the fox panel using absolute
-          positioning relative to the .top-section grid container. This preserves
-          the two-column layout while giving the explanation visual proximity to
-          the character that triggered it. On mobile, it repositions above the fox.
-          All explanation text here is placeholder — the real pipeline wires in
-          generated text from the text generator module.
+          XAI popup — anchored to .main-card, floats left of fox column.
         -->
-        <div class="xai-popup" id="xaiPopup" role="dialog" aria-label="Weather explanation">
-          <div class="xai-popup-header">
-            <div class="xai-popup-title">Why this outfit?</div>
-            <button class="xai-close-btn" id="xaiClose" aria-label="Close explanation">✕</button>
+        <div class="popup" id="xaiPopup">
+          <div class="popup-header">
+            <div class="popup-title">Why this outfit?</div>
+            <button class="popup-close" data-close="xaiPopup">✕</button>
           </div>
-          <div class="xai-popup-body">
-            <strong>It's going to rain today.</strong> Yesterday's high humidity
-            and falling pressure are the main reasons. The model is
-            <strong>medium confidence</strong> — conditions could shift.
+          <div class="popup-body">
+            <strong>Rain is likely today.</strong> I'm recommending a
+            waterproof jacket and an umbrella. Yesterday's high humidity
+            and pressure drop are the strongest signals.
             <br /><br />
-            🌂 Bring an umbrella. 🧥 A waterproof jacket is recommended.
+            🌂 Umbrella &nbsp;·&nbsp; 🧥 Waterproof jacket
           </div>
         </div>
-        <!-- end XAI pop-up -->
+
+        <!-- Emotion tag -->
+        <button class="fox-emotion-btn" id="emotionTrigger" aria-label="See confidence">
+          😐 Neutral
+        </button>
+
+        <!--
+          Emotion popup — confidence in plain language.
+          DISSERTATION NOTE (Ch6 — Design):
+          Replaces the v0.1 progress bar. Plain-language confidence framed
+          as the fox speaking is more accessible for non-expert users.
+        -->
+        <div class="popup" id="emotionPopup">
+          <div class="popup-header">
+            <div class="popup-title">Fox says</div>
+            <button class="popup-close" data-close="emotionPopup">✕</button>
+          </div>
+          <div class="popup-body">
+            I'm <strong>50% sure</strong> it will be a rainy day.
+            Conditions are borderline — there's a real chance it stays
+            dry in the afternoon.
+          </div>
+        </div>
 
       </div>
-      <!-- end fox panel -->
-
     </div>
-    <!-- end top-section -->
+    <!-- end main card -->
 
-    <!-- ── 7-day forecast table ───────────────────────────────────── -->
-    <!--
-      DISSERTATION NOTE (Ch7 — Implementation / Ch6 — Design):
-      The 7-day table was added as a contextual anchor — user survey findings
-      showed that unexpected forecast changes feel like "betrayal". Showing
-      the surrounding days gives users temporal context for today's prediction,
-      which supports trust calibration. Data here is all placeholder / hardcoded.
-    -->
-    <div class="forecast-section">
-      <div class="forecast-header">
-        <div class="forecast-title">7-Day Overview</div>
+    <!-- ── 7-day table ────────────────────────────────────────────── -->
+    <div class="forecast-card">
+      <div class="forecast-card-header">
+        <div class="forecast-card-title">7-Day Overview</div>
       </div>
-
       <table class="forecast-table">
         <thead>
           <tr>
             <th>Day</th>
-            <th>Condition</th>
+            <th></th>
             <th>High</th>
             <th>Low</th>
-            <th>Rain chance</th>
+            <th>Rain</th>
           </tr>
         </thead>
         <tbody>
-
           <tr>
-            <td>
-              <div class="day-label">
-                Tuesday, 21 Apr
-                <span class="yesterday-badge">Yesterday</span>
-              </div>
-            </td>
-            <td>⛅ Partly cloudy</td>
-            <td class="temp-high">14°C</td>
-            <td class="temp-low">8°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot low"></div> 22%
-              </div>
-            </td>
+            <td><div class="day-label">Tue, 21 Apr <span class="yesterday-badge">Yesterday</span></div></td>
+            <td class="cond-icon">⛅</td>
+            <td class="temp-high">14°C</td><td class="temp-low">8°C</td>
+            <td><div class="rain-pill"><div class="rain-dot low"></div>22%</div></td>
           </tr>
-
           <tr class="today-row">
-            <td>
-              <div class="day-label">
-                Wednesday, 22 Apr
-                <span class="today-badge">Today</span>
-              </div>
-            </td>
-            <td>🌧️ Rainy</td>
-            <td class="temp-high">12°C</td>
-            <td class="temp-low">7°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot high"></div> 74%
-              </div>
-            </td>
+            <td><div class="day-label">Wed, 22 Apr <span class="today-badge">Today</span></div></td>
+            <td class="cond-icon">🌧️</td>
+            <td class="temp-high">12°C</td><td class="temp-low">7°C</td>
+            <td><div class="rain-pill"><div class="rain-dot high"></div>74%</div></td>
           </tr>
-
           <tr>
-            <td>Thursday, 23 Apr</td>
-            <td>🌦️ Showers</td>
-            <td class="temp-high">11°C</td>
-            <td class="temp-low">6°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot med"></div> 58%
-              </div>
-            </td>
+            <td>Thu, 23 Apr</td><td class="cond-icon">🌦️</td>
+            <td class="temp-high">11°C</td><td class="temp-low">6°C</td>
+            <td><div class="rain-pill"><div class="rain-dot med"></div>58%</div></td>
           </tr>
-
           <tr>
-            <td>Friday, 24 Apr</td>
-            <td>🌤️ Mostly sunny</td>
-            <td class="temp-high">15°C</td>
-            <td class="temp-low">9°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot low"></div> 15%
-              </div>
-            </td>
+            <td>Fri, 24 Apr</td><td class="cond-icon">🌤️</td>
+            <td class="temp-high">15°C</td><td class="temp-low">9°C</td>
+            <td><div class="rain-pill"><div class="rain-dot low"></div>15%</div></td>
           </tr>
-
           <tr>
-            <td>Saturday, 25 Apr</td>
-            <td>☀️ Sunny</td>
-            <td class="temp-high">17°C</td>
-            <td class="temp-low">10°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot low"></div> 8%
-              </div>
-            </td>
+            <td>Sat, 25 Apr</td><td class="cond-icon">☀️</td>
+            <td class="temp-high">17°C</td><td class="temp-low">10°C</td>
+            <td><div class="rain-pill"><div class="rain-dot low"></div>8%</div></td>
           </tr>
-
           <tr>
-            <td>Sunday, 26 Apr</td>
-            <td>⛅ Partly cloudy</td>
-            <td class="temp-high">16°C</td>
-            <td class="temp-low">9°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot low"></div> 20%
-              </div>
-            </td>
+            <td>Sun, 26 Apr</td><td class="cond-icon">⛅</td>
+            <td class="temp-high">16°C</td><td class="temp-low">9°C</td>
+            <td><div class="rain-pill"><div class="rain-dot low"></div>20%</div></td>
           </tr>
-
           <tr>
-            <td>Monday, 27 Apr</td>
-            <td>🌧️ Rainy</td>
-            <td class="temp-high">13°C</td>
-            <td class="temp-low">7°C</td>
-            <td>
-              <div class="rain-pill">
-                <div class="rain-dot med"></div> 65%
-              </div>
-            </td>
+            <td>Mon, 27 Apr</td><td class="cond-icon">🌧️</td>
+            <td class="temp-high">13°C</td><td class="temp-low">7°C</td>
+            <td><div class="rain-pill"><div class="rain-dot med"></div>65%</div></td>
           </tr>
-
         </tbody>
       </table>
     </div>
-    <!-- end 7-day table -->
 
   </main>
 
-  <!-- ── JS: pop-up interaction ──────────────────────────────────────── -->
   <script>
     /*
      * DISSERTATION NOTE (Ch7 — Implementation):
-     * Minimal vanilla JS for the pop-up toggle. No framework needed here —
-     * the fox click triggers a CSS class toggle (.visible) which shows/hides
-     * the XAI pop-up. The close button and clicking outside both dismiss it.
-     * This interaction pattern will remain the same when real explanation
-     * text is wired in from the backend.
+     * Three pop-up triggers, one shared close mechanism.
+     * Only one popup is open at a time — clicking a trigger closes any
+     * other open popup before opening its own.
      */
 
-    const foxTrigger = document.getElementById('foxTrigger');
-    const xaiPopup   = document.getElementById('xaiPopup');
-    const xaiClose   = document.getElementById('xaiClose');
+    const triggers = [
+      { triggerId: 'foxTrigger',     popupId: 'xaiPopup'     },
+      { triggerId: 'iconTrigger',    popupId: 'iconPopup'    },
+      { triggerId: 'emotionTrigger', popupId: 'emotionPopup' },
+    ];
 
-    // Open pop-up when fox is clicked
-    foxTrigger.addEventListener('click', () => {
-      xaiPopup.classList.toggle('visible');
-    });
+    function closeAll() {
+      document.querySelectorAll('.popup').forEach(p => p.classList.remove('visible'));
+    }
 
-    // Support keyboard (Enter / Space) for accessibility
-    foxTrigger.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        xaiPopup.classList.toggle('visible');
+    triggers.forEach(({ triggerId, popupId }) => {
+      const btn = document.getElementById(triggerId);
+      const pop = document.getElementById(popupId);
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = pop.classList.contains('visible');
+        closeAll();
+        if (!isOpen) pop.classList.add('visible');
+      });
+
+      if (triggerId === 'foxTrigger') {
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+        });
       }
     });
 
-    // Close when X button is clicked
-    xaiClose.addEventListener('click', (e) => {
-      e.stopPropagation(); // prevent reopening via fox click bubble
-      xaiPopup.classList.remove('visible');
+    document.querySelectorAll('.popup-close').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); closeAll(); });
     });
 
-    // Close when clicking anywhere outside the fox panel
-    document.addEventListener('click', (e) => {
-      if (!foxTrigger.contains(e.target) && !xaiPopup.contains(e.target)) {
-        xaiPopup.classList.remove('visible');
+    // Position emotionPopup below the emotion button dynamically
+    const emotionBtn = document.getElementById('emotionTrigger');
+    const emotionPop = document.getElementById('emotionPopup');
+    emotionBtn.addEventListener('click', () => {
+      if (emotionPop.classList.contains('visible')) {
+        const btnRect = emotionBtn.getBoundingClientRect();
+        const colRect = emotionBtn.closest('.fox-col').getBoundingClientRect();
+        emotionPop.style.top  = (btnRect.bottom - colRect.top + 10) + 'px';
+        emotionPop.style.bottom = 'auto';
       }
     });
+
+    document.addEventListener('click', () => closeAll());
   </script>
 
 </body>
