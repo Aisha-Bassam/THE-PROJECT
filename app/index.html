@@ -12,7 +12,7 @@
   <style>
     /* ─── Design tokens: rainy morning palette ──────────────────────── */
     :root {
-      --bg-top:      #2C4A6E;
+      --bg-top:      #3365a1;
       --bg-bot:      #1A2E45;
       --card-bg:     rgba(255, 255, 255, 0.10);
       --card-border: rgba(255, 255, 255, 0.16);
@@ -133,7 +133,7 @@
       position: relative; /* anchor for icon popup */
     }
 
-    .condition-icon-btn {
+    /* .condition-icon-btn {
       font-size: 3.8rem;
       line-height: 1;
       cursor: pointer;
@@ -150,12 +150,37 @@
       gap: 3px;
       transition: transform 0.2s ease, background 0.2s ease;
       flex-shrink: 0;
+    } */
+    .condition-icon-btn {
+      font-size: 3.8rem;
+      line-height: 1;
+      cursor: pointer;
+      background: rgba(255,255,255,0.10);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.2s ease, background 0.2s ease;
+      flex-shrink: 0;
     }
     .condition-icon-btn:hover {
       transform: scale(1.07);
       background: rgba(255,255,255,0.17);
     }
 
+    /* .icon-hint {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text-dimmer);
+      white-space: nowrap;
+    } */
     .icon-hint {
       font-family: 'Outfit', sans-serif;
       font-size: 0.58rem;
@@ -332,7 +357,7 @@
      */
     #xaiPopup {
       width: 228px;
-      right: 53%;
+      right: 60%;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -458,7 +483,7 @@
       padding: 2px 8px;
       border-radius: 20px;
     }
-    .today-badge     { background: var(--fox-amber); color: #1A2E45; }
+    .today-badge     { background: #e8c29b; color: #1A2E45; }
     .yesterday-badge { background: rgba(255,255,255,0.15); color: var(--text-dim); }
 
     .cond-icon { font-size: 1.25rem; }
