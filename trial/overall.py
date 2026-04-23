@@ -17,3 +17,10 @@ print(df.isnull().sum())
 # Peek at the data
 print("\n--- First 5 rows ---")
 print(df.head())
+
+# print unique locations
+result = df.iloc[:, 0].dropna().unique().tolist()
+print(result)
+
+# how many rows exist per year
+print(df.groupby('year')['date'].count())

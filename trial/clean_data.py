@@ -1,7 +1,7 @@
 import pandas as pd
 
 # ── 1. LOAD ──────────────────────────────────────────────────────────────────
-df = pd.read_csv('ML/all_weather_data.csv')
+df = pd.read_csv('trial/all_weather_data.csv')
 
 # ── 2. FILTER TO UK ──────────────────────────────────────────────────────────
 non_uk = [
@@ -33,7 +33,7 @@ for col in target_cols:
 df_uk = df_uk.dropna(subset=[f'next_{col}' for col in target_cols])
 
 # ── 6. SAVE ──────────────────────────────────────────────────────────────────
-df_uk.to_csv('ML/uk_weather_data.csv', index=False)
+df_uk.to_csv('data/uk_weather_data.csv', index=False)
 
 # ── 7. SANITY CHECK ──────────────────────────────────────────────────────────
 print("Rows:", df_uk.shape[0])
