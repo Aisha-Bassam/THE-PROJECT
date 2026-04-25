@@ -40,7 +40,7 @@ def predict_only(X_row):
     return output_to_model(preds, day_of_year, location_code)
 
 
-def generate_day_json(X_row, date, location, bounds):
+def generate_day_json(X_row, date, location, bounds, prefix):
     """
     Full treatment — predictions + confidence + SHAP — saved as JSON.
     Used for TODAY and TOMORROW in the 7-day chain.
@@ -92,7 +92,9 @@ def generate_day_json(X_row, date, location, bounds):
     }
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    filename = f"{date}_{location.lower()}.json"
+    # filename = f"{date}_{location.lower()}.json"
+    formatted_date = pd.to_datetime(date).strftime("%d%m%Y")
+    filename = f"{prefix}_{formatted_date}_{location.lower()}.json"
     filepath = os.path.join(OUTPUT_DIR, filename)
     with open(filepath, "w") as f:
         json.dump(output, f, indent=2)
