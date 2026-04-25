@@ -27,10 +27,11 @@ import os
 import shap
 
 from utils import (
-    FEATURE_COLS, TARGET_COLS, 
-    load_model, load_bounds, tree_std, normalise, geometric_mean,
+    FEATURE_COLS, TARGET_COLS,
+    load_model, load_bounds, tree_std, normalise,
     row_locator, input_to_model, output_to_model
 )
+from common import geometric_mean
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
