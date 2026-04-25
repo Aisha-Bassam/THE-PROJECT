@@ -116,15 +116,16 @@ def input_to_model(raw_row):
 
 def output_to_model(predictions, day_of_year, location_code):
     """
-    Takes a predictions dict (7 next_X values), incremented day_of_year,
+    Takes a predictions dict (7 next_X values), current day_of_year,
     and location_code — returns a 9-column DataFrame ready for the model.
+    Increments day_of_year internally.
 
     predictions: dict e.g. {"next_min_temp °c": 13.2, "next_max_temp °c": 20.1, ...}
-    day_of_year: int — already incremented by caller
+    day_of_year: int — current day, will be incremented by 1
     location_code: int — stays constant across the scenario
     """
     row = {PREDICTION_TO_FEATURE[k]: v for k, v in predictions.items()}
-    row["day_of_year"]   = day_of_year
+    row["day_of_year"]   = day_of_year + 1
     row["location_code"] = location_code
 
     return pd.DataFrame([row])[FEATURE_COLS]
