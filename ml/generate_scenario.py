@@ -5,6 +5,8 @@ Generates 7-day scenario data for WeatherFox prototype demonstrations.
 Uses pre-trained models from outputs/models/ and pre-computed confidence
 bounds from outputs/models/confidence_bounds.pkl.
 """
+import warnings
+warnings.filterwarnings('ignore')
 
 import pandas as pd
 import json
@@ -23,6 +25,8 @@ INPUT_FILE   = "data/uk_weather_data.csv"
 OUTPUT_DIR   = "outputs/scenarios"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+def format_date(date): 
+    return pd.to_datetime(date).strftime("%d%m%Y")
 
 def predict_only(X_row):
     """
@@ -93,8 +97,8 @@ def generate_day_json(X_row, date, location, bounds, prefix):
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     # filename = f"{date}_{location.lower()}.json"
-    formatted_date = pd.to_datetime(date).strftime("%d%m%Y")
-    filename = f"{prefix}_{formatted_date}_{location.lower()}.json"
+    # formatted_date = pd.to_datetime(date).strftime("%d%m%Y")
+    filename = f"{prefix}_{format_date(date)}_{location.lower()}.json"
     filepath = os.path.join(OUTPUT_DIR, filename)
     with open(filepath, "w") as f:
         json.dump(output, f, indent=2)
@@ -111,25 +115,26 @@ df         = pd.read_csv(INPUT_FILE)
 holdout_df = df[df["year"] == 2023].copy()
 bounds     = load_bounds()
 
+
 def generate_seven_predicitons(date, location):
     # FIND YESTERDAY DATE
     raw_row = row_locator(holdout_df, date, location)
     yesterday_X = input_to_model(raw_row)
 
     # predict TODAY using YESTERDAY
-    today_X    = generate_day_json(yesterday_X, date, location, bounds)
+    today_X    = generate_day_json(yesterday_X, "2023-07-02", location, bounds, "TODAY")
 
     # predict TOMORROW
-    tomorrow_X = generate_day_json(today_X,"2023-07-03", location, bounds)
+    tomorrow_X = generate_day_json(today_X,"2023-07-03", location, bounds, "TOMORROW")
     # FOUR through SEVEN — predictions only
     four_X  = predict_only(tomorrow_X)
     five_X  = predict_only(four_X)
     six_X   = predict_only(five_X)
     seven_X = predict_only(six_X)
 
-    formatted_date = pd.to_datetime(date).strftime("%d%m%Y")
+    
     seven_predictions = {
-        "Date" : formatted_date,
+        "Date" : format_date(date),
         "YESTERDAY" : yesterday_X,
         "TODAY" : today_X,
         "TOMORROW" : tomorrow_X,
@@ -140,6 +145,10 @@ def generate_seven_predicitons(date, location):
     }
 
     return seven_predictions
+
+date     = "2023-07-01"
+location = "London"
+print(generate_seven_predicitons(date, location))
 
 # # ── DEMO: How it is used ──────────────────────────────────────────────────────
 
