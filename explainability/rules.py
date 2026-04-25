@@ -32,7 +32,7 @@ CATEGORIES = {
     "cloud":    ["sunny", "mostly_sunny", "mostly_cloudy", "overcast"],
     "wind":     ["light", "moderate", "strong"],
     "humidity": ["dry", "normal", "humid"],
-    "temp_min": ["cold", "normal"],
-    "temp_max": ["hot", "normal"],
+    "temp_min": ["cold", "normal", "hot"],
+    "temp_max": ["cold", "normal", "hot"],
     "wind_dir": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
 }

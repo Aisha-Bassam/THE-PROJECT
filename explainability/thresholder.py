@@ -76,16 +76,20 @@ def threshold(short_name, value):
     elif short_name == "temp_min":
         if value <= 10:
             return "cold"
-        else:
+        elif value < 25:
             return "normal"
+        else:
+            return "hot"
 
     # ── Max temperature ───────────────────────────────────────────────────────
     # Source: Met Office Heat Health Alert
     elif short_name == "temp_max":
-        if value >= 25:
-            return "hot"
-        else:
+        if value <= 10:
+            return "cold"
+        elif value < 25:
             return "normal"
+        else:
+            return "hot"
 
     # ── Wind direction ────────────────────────────────────────────────────────
     # 360° divided into 8 standard compass sectors
