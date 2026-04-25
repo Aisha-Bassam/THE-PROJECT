@@ -111,21 +111,24 @@ def generate_day_json(X_row, date, location, bounds, prefix):
     return output_to_model(preds, day_of_year, location_code)
 
 
-df         = pd.read_csv(INPUT_FILE)
-holdout_df = df[df["year"] == 2023].copy()
-bounds     = load_bounds()
-
 
 def generate_seven_predicitons(date, location):
+    df  = pd.read_csv(INPUT_FILE)
+    holdout_df = df[df["year"] == 2023].copy()
+    bounds     = load_bounds()
+
     # FIND YESTERDAY DATE
     raw_row = row_locator(holdout_df, date, location)
     yesterday_X = input_to_model(raw_row)
 
     # predict TODAY using YESTERDAY
-    today_X    = generate_day_json(yesterday_X, "2023-07-02", location, bounds, "TODAY")
+    today_date    = (pd.to_datetime(date) + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    today_X    = generate_day_json(yesterday_X, today_date, location, bounds, "TODAY")
 
     # predict TOMORROW
-    tomorrow_X = generate_day_json(today_X,"2023-07-03", location, bounds, "TOMORROW")
+    tomorrow_date = (pd.to_datetime(date) + pd.Timedelta(days=2)).strftime("%Y-%m-%d")
+    tomorrow_X = generate_day_json(today_X,tomorrow_date , location, bounds, "TOMORROW")
+
     # FOUR through SEVEN — predictions only
     four_X  = predict_only(tomorrow_X)
     five_X  = predict_only(four_X)
@@ -146,33 +149,10 @@ def generate_seven_predicitons(date, location):
 
     return seven_predictions
 
-date     = "2023-07-01"
-location = "London"
-print(generate_seven_predicitons(date, location))
-
-# # ── DEMO: How it is used ──────────────────────────────────────────────────────
-
-# if __name__ == "__main__":
-
-#     df         = pd.read_csv(INPUT_FILE)
-#     holdout_df = df[df["year"] == 2023].copy()
-#     bounds     = load_bounds()
-
-#     date     = "2023-07-01"
-#     location = "London"
-
-#     # Get real YESTERDAY data
-#     raw_row     = row_locator(holdout_df, date, location)
-#     yesterday_X = input_to_model(raw_row)
-
-#     # TODAY and TOMORROW — full JSON
-#     today_X    = generate_day_json(yesterday_X, "2023-07-02", location, bounds)
-#     tomorrow_X = generate_day_json(today_X,     "2023-07-03", location, bounds)
-
-#     # FOUR through SEVEN — predictions only
-#     four_X  = predict_only(tomorrow_X)
-#     five_X  = predict_only(four_X)
-#     six_X   = predict_only(five_X)
-#     seven_X = predict_only(six_X)
-
-#     print("\nDone. JSONs saved to outputs/scenarios/")
+# # DEMO TRIAL
+# date     = "2023-07-01"
+# location = "London"
+# results = generate_seven_predicitons(date, location)
+# for result in results.keys():
+#     print(result)
+#     print(results[result])
