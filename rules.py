@@ -83,3 +83,73 @@ CLOTHING_RULES = {
         {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
     ],
 }
+
+
+# ── Weather label priority ─────────────────────────────────────────────────────
+# Ordered from most to least dominant.
+# Weather Mapper iterates through this list and flags all matching labels.
+# Labeller picks the first matching label as dominant.
+# Grounded in survey finding: rain is most checked, then actionable signals,
+# then cloud as fallback. "Good weather" signals are lowest priority.
+
+WEATHER_LABEL_PRIORITY = [
+    "Heavy Rain",
+    "Moderate Rain",
+    "Hot Day",
+    "Cold Day",
+    "Light Rain",
+    "Strong Wind",
+    "Overcast",
+    "Mostly Cloudy",
+    "Mostly Sunny",
+    "Sunny",
+    "Moderate Wind",
+    "Humid",
+    "Dry Air",
+]
+
+# ── Weather label rules ────────────────────────────────────────────────────────
+# Each label maps to a list of rules (same pattern as CLOTHING_RULES).
+# A rule is a dict of short_name → allowed threshold categories.
+# First matching rule wins.
+
+WEATHER_LABELS = {
+    "Heavy Rain":    [{"rain": ["heavy"]}],
+    "Moderate Rain": [{"rain": ["moderate"]}],
+    "Hot Day":       [{"temp_min": ["hot"], "temp_max": ["hot"]}],
+    "Cold Day":      [{"temp_min": ["cold"], "temp_max": ["cold"]}],
+    "Light Rain":    [{"rain": ["light"]}],
+    "Strong Wind":   [{"wind": ["strong"]}],
+    "Overcast":      [{"cloud": ["overcast"]}],
+    "Mostly Cloudy": [{"cloud": ["mostly_cloudy"]}],
+    "Mostly Sunny":  [{"cloud": ["mostly_sunny"]}],
+    "Sunny":         [{"cloud": ["sunny"]}],
+    "Moderate Wind": [{"wind": ["moderate"]}],
+    "Humid":         [{"humidity": ["humid"]}],
+    "Dry Air":       [{"humidity": ["dry"]}],
+}
+
+# ── Label to icon mapping ──────────────────────────────────────────────────────
+# Maps weather labels to icon short names.
+# Only directly icon-mappable labels are included here.
+# Non-icon labels (Cold Day, Hot Day, Humid, Dry Air) fall through to
+# secondary labels to find an icon — handled by the Labeller.
+
+LABEL_TO_ICON = {
+    "Heavy Rain":    "rainy",
+    "Moderate Rain": "rainy",
+    "Light Rain":    "light_rain",
+    "Strong Wind":   "windy",
+    "Overcast":      "overcast",
+    "Mostly Cloudy": "mostly_cloudy",
+    "Mostly Sunny":  "mostly_sunny",
+    "Sunny":         "sunny",
+}
+
+# ── Non-icon labels ────────────────────────────────────────────────────────────
+# Labels that do not map directly to an icon.
+# When one of these is dominant, the Labeller looks at secondary labels
+# to find the first icon-mappable one. Cloud always produces a label,
+# so there is always a fallback.
+
+NON_ICON_LABELS = ["Cold Day", "Hot Day", "Humid", "Dry Air"]
