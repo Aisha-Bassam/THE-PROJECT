@@ -4,8 +4,8 @@ explainability/prediction_tracker.py
 Compares today's actual prediction against yesterday's prediction for today,
 and flags columns that changed significantly.
 
-TODAY_<date>.json  — today's prediction (ran with today's real input)
-TOMOR_<date>.json  — yesterday's prediction for today (ran with yesterday's input)
+TODAY_<date>.json    — today's prediction (ran with today's real input)
+TOMORROW_<date>.json — yesterday's prediction for today (ran with yesterday's input)
 
 # DISSERTATION NOTE: (Ch4 - Methodology/Implementation)
 # Prediction changes are a key XAI signal — when the forecast changes,
@@ -15,7 +15,7 @@ TOMOR_<date>.json  — yesterday's prediction for today (ran with yesterday's in
 """
 
 from rules import SHORT_TO_COLUMN
-from utils import extract_predictions
+from utils import extract_predictions, load_prediction
 
 # ── Change thresholds (per column) ────────────────────────────────────────────
 
@@ -38,20 +38,27 @@ def circular_distance(a, b):
     """
     return min(abs(a - b), 360 - abs(a - b))
 
-
 # ── Core function ─────────────────────────────────────────────────────────────
 
-def prediction_tracker(today_json, tomorrow_json):
+def prediction_tracker(today_json):
     """
     Compares today's prediction against yesterday's prediction for today.
-    Flags columns that changed significantly.
+    Looks up the TOMORROW file using date and location from today_json meta.
+    Returns empty dict if no TOMORROW file exists for this date.
 
-    Input:  today_json    (dict) — loaded TODAY_<date>.json
-            tomorrow_json (dict) — loaded TOMOR_<date>.json
+    Input:  today_json (dict) — loaded TODAY_<date>.json
     Output: dict of changed columns only
             e.g. {"rain": {"old": 0.5, "new": 2.3, "direction": "increase"}}
-            empty dict if nothing changed significantly.
+            empty dict if nothing changed significantly or no TOMORROW file found.
     """
+    date     = today_json["meta"]["date"]
+    location = today_json["meta"]["location"]
+
+    try:
+        tomorrow_json = load_prediction(date, location, "TOMORROW")
+    except FileNotFoundError:
+        return {}
+
     old_preds = extract_predictions(tomorrow_json)
     new_preds = extract_predictions(today_json)
 
