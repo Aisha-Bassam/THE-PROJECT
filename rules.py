@@ -36,3 +36,50 @@ CATEGORIES = {
     "temp_max": ["cold", "normal", "hot"],
     "wind_dir": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
 }
+
+
+# ── Clothing rules ─────────────────────────────────────────────────────────────
+
+# Each item has a list of rules. Each rule is a dict of short_name → allowed values.
+# Columns omitted from a rule have no restriction — any value is accepted.
+# Rules are ordered: most specific/restrictive first.
+# First matching rule wins — its columns become the driving categories for text generation.
+
+CLOTHING_RULES = {
+    "sunglasses": [
+        {"rain": ["light"], "cloud": ["sunny"]},
+        {"rain": ["none"], "cloud": ["sunny", "mostly_sunny"]},
+    ],
+    "baseball_cap": [
+        {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light", "moderate"], "humidity": ["dry", "normal"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
+    ],
+    "beanie": [
+        {"rain": ["none", "light"], "temp_min": ["cold"], "temp_max": ["cold", "normal"]},
+        {"rain": ["none"], "cloud": ["mostly_cloudy", "overcast"], "humidity": ["dry", "normal"], "temp_min": ["normal"], "temp_max": ["normal"]},
+    ],
+    "scarf": [
+        {"temp_min": ["cold"]},
+        {"rain": ["none"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
+    ],
+    "handfan": [
+        {"rain": ["none"], "wind": ["light"], "temp_min": ["hot"], "temp_max": ["hot"]},
+        {"rain": ["none"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
+        {"rain": ["none"], "cloud": ["mostly_cloudy", "overcast"], "wind": ["light"], "humidity": ["humid"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
+    ],
+    "welly": [
+        {"rain": ["heavy"]},
+        {"rain": ["moderate"], "cloud": ["mostly_cloudy", "overcast"]},
+    ],
+    "umbrella": [
+        {"rain": ["moderate"], "wind": ["light"]},
+        {"rain": ["light"], "cloud": ["mostly_cloudy", "overcast"], "wind": ["light"]},
+    ],
+    "raincoat": [
+        {"rain": ["heavy"]},
+        {"rain": ["light", "moderate"], "wind": ["moderate", "strong"]},
+    ],
+    "jacket": [
+        {"temp_min": ["cold"], "wind": ["moderate", "strong"]},
+        {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
+    ],
+}
