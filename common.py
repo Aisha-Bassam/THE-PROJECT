@@ -7,7 +7,6 @@ cross-layer functionality.
 """
 
 import numpy as np
-from rules import SHORT_TO_COLUMN
 
 def geometric_mean(values):
     """
@@ -22,18 +21,3 @@ def geometric_mean(values):
     values = np.clip(values, 0.01, 100)
     return round(float(np.exp(np.mean(np.log(values)))), 2)
 
-
-def get_column_confidences(columns, prediction_json):
-    """
-    Extracts confidence scores for given short column names from a loaded JSON.
-
-    Input:  columns (list)        — short names e.g. ["rain", "cloud"]
-            prediction_json (dict) — loaded from load_prediction()
-    Output: dict — short name → confidence score (0-100)
-            e.g. {"rain": 64.2, "cloud": 71.0}
-    """
-    result = {}
-    for short_name in columns:
-        full_name = SHORT_TO_COLUMN[short_name]
-        result[short_name] = prediction_json["variables"][full_name]["confidence"]
-    return result

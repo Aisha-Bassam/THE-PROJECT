@@ -14,7 +14,7 @@ and returns a combined confidence score and tier label.
 """
 
 from common import geometric_mean
-from explainability.utils import get_column_confidences
+from utils import get_column_confidences
 
 # ── Tier thresholds ───────────────────────────────────────────────────────────
 

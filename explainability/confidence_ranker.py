@@ -14,7 +14,7 @@ e.g. "I'm fairly confident, though less certain about rain."
 """
 
 from confidence_tier import confidence_tier
-from explainability.utils import get_column_confidences
+from utils import get_column_confidences
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
