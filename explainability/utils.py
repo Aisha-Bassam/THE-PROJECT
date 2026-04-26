@@ -54,3 +54,15 @@ def extract_predictions(prediction_json):
     for short_name, full_name in SHORT_TO_COLUMN.items():
         result[short_name] = prediction_json["variables"][full_name]["prediction"]
     return result
+
+
+def rain_percent(rain_mm):
+    """
+    Converts raw rain prediction (mm) to a 0.0–1.0 scale.
+    Grounded in UK threshold: heavy rain = 10mm+.
+    Used by: day_summary, Text Generator.
+
+    Input:  rain_mm (float) — predicted rain in mm
+    Output: float between 0.0 and 1.0
+    """
+    return round(min(rain_mm / 10.0, 1.0), 2)
