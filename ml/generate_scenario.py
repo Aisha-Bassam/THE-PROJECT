@@ -21,6 +21,10 @@ components. The prediction dictionary is returned for the Weather Wrapper.
 import warnings
 warnings.filterwarnings('ignore')
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd
 import json
 import os
