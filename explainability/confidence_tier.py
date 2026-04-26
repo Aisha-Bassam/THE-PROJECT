@@ -1,7 +1,7 @@
 """
 explainability/confidence_tier.py
 ----------------------------------
-Takes one or more column confidence scores from the prediction JSON
+Takes one or more column names and a loaded prediction JSON,
 and returns a combined confidence score and tier label.
 
 # DISSERTATION NOTE: (Ch4 - Methodology/Implementation)
@@ -14,14 +14,15 @@ and returns a combined confidence score and tier label.
 """
 
 from common import geometric_mean
+from explainability.utils import get_column_confidences
 
 # ── Tier thresholds ───────────────────────────────────────────────────────────
 
 TIERS = [
-    (70,  "high"),
-    (40,  "medium"),
-    (20,  "low"),
-    (0,   "very_low"),
+    (70, "high"),
+    (40, "medium"),
+    (20, "low"),
+    (0,  "very_low"),
 ]
 
 # ── Fox expression mapping ────────────────────────────────────────────────────
@@ -35,22 +36,23 @@ TIER_TO_EXPRESSION = {
 
 # ── Core function ─────────────────────────────────────────────────────────────
 
-def confidence_tier(column_scores):
+def confidence_tier(columns, prediction_json):
     """
     Combines confidence scores for given columns and returns
-    a score, tier, and the columns used.
+    a score, tier, expression, and the columns used.
 
-    Input:  column_scores (dict) — short column name → confidence score (0-100)
-            e.g. {"rain": 64.2, "cloud": 71.0}
+    Input:  columns (list)         — short names e.g. ["rain", "cloud"]
+            prediction_json (dict) — loaded from load_prediction()
     Output: dict with score, tier, expression, and columns
 
-    Raises ValueError if column_scores is empty.
+    Raises ValueError if columns is empty.
     """
-    if not column_scores:
-        raise ValueError("column_scores must not be empty.")
+    if not columns:
+        raise ValueError("columns must not be empty.")
 
-    scores = list(column_scores.values())
-    score  = geometric_mean(scores)
+    column_scores = get_column_confidences(columns, prediction_json)
+    scores        = list(column_scores.values())
+    score         = geometric_mean(scores)
 
     tier = "very_low"
     for threshold, label in TIERS:
