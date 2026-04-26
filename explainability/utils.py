@@ -44,3 +44,13 @@ def get_column_confidences(columns, prediction_json):
         full_name = SHORT_TO_COLUMN[short_name]
         result[short_name] = prediction_json["variables"][full_name]["confidence"]
     return result
+
+def extract_predictions(prediction_json):
+    """
+    Extracts raw predicted values from a loaded JSON.
+    Returns dict of short_name → predicted value.
+    """
+    result = {}
+    for short_name, full_name in SHORT_TO_COLUMN.items():
+        result[short_name] = prediction_json["variables"][full_name]["prediction"]
+    return result

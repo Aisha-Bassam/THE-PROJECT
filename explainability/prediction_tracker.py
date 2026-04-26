@@ -15,6 +15,7 @@ TOMOR_<date>.json  — yesterday's prediction for today (ran with yesterday's in
 """
 
 from rules import SHORT_TO_COLUMN
+from utils import extract_predictions
 
 # ── Change thresholds (per column) ────────────────────────────────────────────
 
@@ -37,15 +38,6 @@ def circular_distance(a, b):
     """
     return min(abs(a - b), 360 - abs(a - b))
 
-def extract_predictions(prediction_json):
-    """
-    Extracts raw predicted values from a loaded JSON.
-    Returns dict of short_name → predicted value.
-    """
-    result = {}
-    for short_name, full_name in SHORT_TO_COLUMN.items():
-        result[short_name] = prediction_json["variables"][full_name]["prediction"]
-    return result
 
 # ── Core function ─────────────────────────────────────────────────────────────
 
