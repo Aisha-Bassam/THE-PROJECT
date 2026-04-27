@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fox Layer Alignment Test</title>
+    <style>
+        body {
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: sans-serif;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+
+        .test-case {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* The fox container — every layer is absolute inside this */
+        .fox {
+            position: relative;
+            width: 300px;
+            height: 300px;  /* adjust if your canvas is not square */
+        }
+
+        .fox img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="font-size: 18px;">Fox Layer Alignment Test</h1>
+    <p style="font-size: 13px; color: #666;">Check: do layers sit on top of each other correctly? Does the raincoat show layers beneath it?</p>
+
+    <div class="row">
+
+        <!-- TEST 1: Base only -->
+        <div class="test-case">
+            <div class="fox">
+                <img src="../app/static/fox/fox_base.png">
+            </div>
+            <h2>Base only</h2>
+        </div>
+
+        <!-- TEST 2: Base + confident expression -->
+        <div class="test-case">
+            <div class="fox">
+                <img src="../app/static/fox/fox_base.png">
+                <img src="../app/static/fox/confident.png">
+            </div>
+            <h2>Base + confident</h2>
+        </div>
+
+        <!-- TEST 3: Base + confident + jacket -->
+        <div class="test-case">
+            <div class="fox">
+                <img src="../app/static/fox/fox_base.png">
+                <img src="../app/static/fox/confident.png">
+                <img src="../app/static/fox/jacket.png">
+            </div>
+            <h2>Base + confident + jacket</h2>
+        </div>
+
+        <!-- TEST 4: Base + confident + jacket + raincoat (transparency test) -->
+        <div class="test-case">
+            <div class="fox">
+                <img src="../app/static/fox/fox_base.png">
+                <img src="../app/static/fox/confident.png">
+                <img src="../app/static/fox/jacket.png">
+                <img src="../app/static/fox/raincoat.png">
+            </div>
+            <h2>Base + confident + jacket + raincoat<br>(jacket should show through raincoat)</h2>
+        </div>
+
+    </div>
+
+</body>
+</html>
