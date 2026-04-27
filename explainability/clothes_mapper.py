@@ -14,32 +14,30 @@ and their driving categories.
 """
 
 from rules import CLOTHING_RULES
-from utils import extract_predictions
-from thresholder import threshold
 
-def clothes_mapper(today_json):
+
+def clothes_mapper(categories):
     """
-    Maps today's predicted weather to recommended clothing items
+    Maps today's categorised weather to recommended clothing items
     and their driving categories.
 
-    Input:  today_json (dict) — loaded TODAY_<date>.json
+    Input:  categories (dict) — {short_name: category_string}
+            e.g. {"rain": "light", "cloud": "overcast", "temp_min": "cold", ...}
+            Already thresholded — produced by day_pipeline.
+
     Output: dict of triggered items → driving categories
             e.g. {
-                "umbrella": {"rain": "light", "cloud": "overcast", "wind": "light"},
-                "jacket":   {"temp_min": "cold", "wind": "strong"}
+                "umbrella": {"rain": "light", "cloud": "overcast"},
+                "jacket":   {"temp_min": "cold"}
             }
-            empty dict if no items trigger.
+            Empty dict if no items trigger.
     """
-    # Step 1 — extract raw predictions and threshold all columns
-    predictions = extract_predictions(today_json)
-    categories  = {short: threshold(short, val) for short, val in predictions.items()}
-
-    # Step 2 — check each item's rules against categories
     outfit = {}
+
     for item, rules in CLOTHING_RULES.items():
         for rule in rules:
             if all(categories.get(col) in allowed for col, allowed in rule.items()):
-                # First matching rule wins — extract actual category values for driving cols
+                # First matching rule wins
                 outfit[item] = {col: categories[col] for col in rule}
                 break
 
