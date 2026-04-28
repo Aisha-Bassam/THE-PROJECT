@@ -29,6 +29,7 @@ import json
 import pandas as pd
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask import send_from_directory
 
 from explainability.weather_pipeline import weather_pipeline
 from explainability.day_pipeline import day_pipeline
@@ -83,6 +84,36 @@ def load_today_json(date, location):
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
+
+@app.route("/")
+def index():
+    return send_from_directory("../../app", "new_index.html")
+
+# @app.route("/static/<path:filename>")
+# def static_files(filename):
+#     static_dir = os.path.join(
+#         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+#         "app", "static"
+#     )
+#     return send_from_directory(static_dir, filename)
+
+# @app.route("/static/<path:filename>")
+# def static_files(filename):
+#     static_dir = "/Users/aishabassam/Documents/Final Project/THE PROJECT/app/static"
+#     return send_from_directory(static_dir, filename)
+
+
+@app.route("/static/js/<path:filename>")
+def static_files(filename):
+    static_dir = "/Users/aishabassam/Documents/Final Project/THE PROJECT/app/static/js"
+    return send_from_directory(static_dir, filename)
+
+@app.route("/static/fox/<path:filename>")
+def fox_files(filename):
+    static_dir = "/Users/aishabassam/Documents/Final Project/THE PROJECT/app/static/fox"
+    return send_from_directory(static_dir, filename)
+
+
 @app.route("/api/scenario")
 def scenario():
     """
@@ -126,4 +157,8 @@ def scenario():
 # ── Run ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    print("STATIC DIR:", os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "app", "static"
+    ))
     app.run(debug=True, port=5000)
