@@ -153,3 +153,28 @@ LABEL_TO_ICON = {
 # so there is always a fallback.
 
 NON_ICON_LABELS = ["Cold Day", "Hot Day", "Humid", "Dry Air"]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FOX LAYER ORDER
+# Defines the stacking order for fox PNG layers in the UI.
+# fox_wrapper iterates this list and includes only active layers.
+# Order is visual: earlier = further back, later = closer to viewer.
+# ─────────────────────────────────────────────────────────────────────────────
+
+LAYER_ORDER = [
+    "fox_base",       # always present — the base fox body with no face
+    "jacket",         # base clothing layer — under everything else
+    "scarf",          # over jacket
+    "raincoat",       # over jacket and scarf — transparent, shows layers beneath
+    "confident",      # ─┐
+    "neutral",        #  │ exactly one emotion will be active at a time
+    "hesitant",       #  │ sits above clothes, below accessories
+    "apologetic",     # ─┘
+    "baseball_cap",   # before beanie — by design only one hat active at a time
+    "beanie",         # over baseball cap if both somehow present (safety fallback)
+    "sunglasses",     # order relative to hats does not matter visually
+    "wellies",        # ─┐
+    "umbrella",       #  │ always on top — never under anything
+    "handfan",        # ─┘
+]
