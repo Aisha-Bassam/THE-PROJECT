@@ -13,8 +13,8 @@ e.g. "I'm fairly confident, though less certain about rain."
 # This threshold is a pragmatic choice to surface only meaningful variation.
 """
 
-from confidence_tier import confidence_tier
-from utils import get_column_confidences
+from explainability.confidence_tier import confidence_tier
+from explainability.utils import get_column_confidences
 
 # ── Config ────────────────────────────────────────────────────────────────────
 

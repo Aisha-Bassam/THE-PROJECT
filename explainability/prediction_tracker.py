@@ -15,7 +15,7 @@ TOMORROW_<date>.json — yesterday's prediction for today (ran with yesterday's 
 """
 
 from rules import SHORT_TO_COLUMN
-from utils import extract_predictions, load_prediction
+from explainability.utils import extract_predictions, load_prediction
 
 # ── Change thresholds (per column) ────────────────────────────────────────────
 

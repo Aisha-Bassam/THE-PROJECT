@@ -10,7 +10,7 @@ Used by Flask for both the main forecast card and the 7-day table.
 # Background colour, emoji icons, and rain dot opacity are handled in the UI layer.
 """
 
-from utils import rain_percent
+from explainability.utils import rain_percent
 
 def day_summary(labeller_output, predictions, categories):
     """

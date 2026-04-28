@@ -10,7 +10,7 @@ for the forecast table.
 # No SHAP, no confidence, no text — table only.
 """
 
-from day_pipeline import day_pipeline
+from explainability.day_pipeline import day_pipeline
 
 DAYS = ["YESTERDAY", "TODAY", "TOMORROW", "FOUR", "FIVE", "SIX", "SEVEN"]
 
