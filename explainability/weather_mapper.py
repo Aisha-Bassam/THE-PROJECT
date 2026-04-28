@@ -71,7 +71,7 @@ def labeller(mapper_output):
     if dominant not in NON_ICON_LABELS:
         return {
             "label": dominant,
-            "icon":  LABEL_TO_ICON[dominant],
+            "icon_label":  LABEL_TO_ICON[dominant],
         }
 
     # Search secondary labels for first icon-mappable one
@@ -79,7 +79,7 @@ def labeller(mapper_output):
         if label in LABEL_TO_ICON:
             return {
                 "label": dominant,
-                "icon":  LABEL_TO_ICON[label],
+                "icon_label":  LABEL_TO_ICON[label],
             }
 
     # Fallback — should never reach here since cloud always produces a label
