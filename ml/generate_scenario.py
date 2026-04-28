@@ -150,6 +150,27 @@ def generate_day_json(X_row, date, location, bounds, prefix):
 
     return output_to_model(preds, day_of_year, location_code)
 
+
+def save_scenario(scenario, location):
+    """
+    Serialises the scenario dict to disk as JSON.
+    DataFrames are converted to flat dicts (one row each).
+    Saved to outputs/scenarios/scenario_latest.json.
+    Flask reads this at request time — no models or CSV needed.
+    """
+    serialisable = {"Date": scenario["Date"]}
+
+    for key in ["YESTERDAY", "TODAY", "TOMORROW", "FOUR", "FIVE", "SIX", "SEVEN"]:
+        serialisable[key] = scenario[key].to_dict(orient="records")[0]
+
+    filename = f"SCENARIO_{scenario['Date']}_{location.lower()}.json"
+    # filename = f"SCENARIO_{serialisable['Date']}_{location.lower()}.json"
+
+    filepath = os.path.join(OUTPUT_DIR, filename)
+    with open(filepath, "w") as f:
+        json.dump(serialisable, f, indent=2)
+    print(f"  Saved: {filepath}")
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def generate_seven_predictions(date, location):
@@ -185,6 +206,10 @@ def generate_seven_predictions(date, location):
     five_X  = predict_only(four_X)
     six_X   = predict_only(five_X)
     seven_X = predict_only(six_X)
+
+    save_scenario({"Date": format_date(date), "YESTERDAY": yesterday_X, "TODAY": today_X,
+               "TOMORROW": tomorrow_X, "FOUR": four_X, "FIVE": five_X,
+               "SIX": six_X, "SEVEN": seven_X}, location)
 
     return {
         "Date"      : format_date(date),

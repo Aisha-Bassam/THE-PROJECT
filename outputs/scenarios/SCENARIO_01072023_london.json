@@ -1,0 +1,80 @@
+{
+  "Date": "01072023",
+  "YESTERDAY": {
+    "min_temp \u00b0c": 15.0,
+    "max_temp \u00b0c": 22.0,
+    "rain mm": 0.5,
+    "humidity %": 66.0,
+    "cloud_cover %": 63.0,
+    "wind_speed km/h": 19.0,
+    "wind_direction_numerical": 270.0,
+    "day_of_year": 182,
+    "location_code": 355
+  },
+  "TODAY": {
+    "min_temp \u00b0c": 13.3252,
+    "max_temp \u00b0c": 21.4433,
+    "rain mm": 1.7338,
+    "humidity %": 64.7388,
+    "cloud_cover %": 50.166,
+    "wind_speed km/h": 14.6965,
+    "wind_direction_numerical": 247.3029,
+    "day_of_year": 183,
+    "location_code": 355
+  },
+  "TOMORROW": {
+    "min_temp \u00b0c": 13.6269,
+    "max_temp \u00b0c": 21.5576,
+    "rain mm": 3.6743,
+    "humidity %": 68.0102,
+    "cloud_cover %": 54.6445,
+    "wind_speed km/h": 14.5934,
+    "wind_direction_numerical": 219.2397,
+    "day_of_year": 184,
+    "location_code": 355
+  },
+  "FOUR": {
+    "min_temp \u00b0c": 13.209817358166726,
+    "max_temp \u00b0c": 20.870752675167306,
+    "rain mm": 2.7412158352358547,
+    "humidity %": 71.31561617269033,
+    "cloud_cover %": 54.77136981913627,
+    "wind_speed km/h": 16.690308665518543,
+    "wind_direction_numerical": 172.99670162587717,
+    "day_of_year": 185,
+    "location_code": 355
+  },
+  "FIVE": {
+    "min_temp \u00b0c": 12.345257513989356,
+    "max_temp \u00b0c": 19.337190462981358,
+    "rain mm": 3.5837335337360994,
+    "humidity %": 75.49046766108685,
+    "cloud_cover %": 60.057189693694625,
+    "wind_speed km/h": 16.72920815371574,
+    "wind_direction_numerical": 211.632509905721,
+    "day_of_year": 186,
+    "location_code": 355
+  },
+  "SIX": {
+    "min_temp \u00b0c": 11.82708533063487,
+    "max_temp \u00b0c": 17.96876614251705,
+    "rain mm": 3.8151034203117553,
+    "humidity %": 77.01779286579871,
+    "cloud_cover %": 58.439021516629765,
+    "wind_speed km/h": 17.498021941440392,
+    "wind_direction_numerical": 216.58074324144735,
+    "day_of_year": 187,
+    "location_code": 355
+  },
+  "SEVEN": {
+    "min_temp \u00b0c": 11.207287109003587,
+    "max_temp \u00b0c": 18.124146790097456,
+    "rain mm": 2.3832490231239225,
+    "humidity %": 78.58279694331182,
+    "cloud_cover %": 61.117356208297785,
+    "wind_speed km/h": 17.395101077649407,
+    "wind_direction_numerical": 224.46967458600184,
+    "day_of_year": 188,
+    "location_code": 355
+  }
+}
