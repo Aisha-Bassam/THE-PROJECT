@@ -85,5 +85,5 @@ def labeller(mapper_output):
     # Fallback — should never reach here since cloud always produces a label
     return {
         "label": dominant,
-        "icon":  "mostly_cloudy",
+        "icon_label":  "mostly_cloudy",
     }
