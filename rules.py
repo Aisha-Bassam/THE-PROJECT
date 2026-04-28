@@ -20,6 +20,19 @@ SHORT_TO_COLUMN = {
     "wind_dir": "next_wind_direction_numerical",
 }
 
+# Scenario/input column name → short name
+# Used by day_pipeline to extract predictions from scenario DataFrames.
+# These use raw column names (no "next_" prefix) as saved by generate_scenario.
+SCENARIO_COLUMN_TO_SHORT = {
+    "rain mm":                    "rain",
+    "cloud_cover %":              "cloud",
+    "wind_speed km/h":            "wind",
+    "humidity %":                 "humidity",
+    "min_temp \u00b0c":           "temp_min",
+    "max_temp \u00b0c":           "temp_max",
+    "wind_direction_numerical":   "wind_dir",
+}
+
 # Full model output column name → short name (reverse of above)
 COLUMN_TO_SHORT = {v: k for k, v in SHORT_TO_COLUMN.items()}
 

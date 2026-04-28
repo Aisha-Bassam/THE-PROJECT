@@ -12,7 +12,7 @@ Used by weather_pipeline (all 7 days) and fox_pipeline (TODAY only).
 # same categorical values used to build the table.
 """
 
-from rules import COLUMN_TO_SHORT
+from rules import SCENARIO_COLUMN_TO_SHORT  # replace COLUMN_TO_SHORT
 from explainability.thresholder import threshold
 from explainability.weather_mapper import weather_mapper, labeller
 from explainability.day_summary import day_summary
@@ -35,9 +35,9 @@ def day_pipeline(day_df):
     # Step 1 — extract raw predictions from DataFrame using COLUMN_TO_SHORT
     # Skips day_of_year and location_code — not weather variables
     predictions = {
-        COLUMN_TO_SHORT[col]: round(float(day_df[col].values[0]), 4)
+        SCENARIO_COLUMN_TO_SHORT[col]: round(float(day_df[col].values[0]), 4)
         for col in day_df.columns
-        if col in COLUMN_TO_SHORT
+        if col in SCENARIO_COLUMN_TO_SHORT
     }
 
     # Step 2 — threshold each prediction into a category string
