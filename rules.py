@@ -72,15 +72,17 @@ CLOTHING_RULES = {
         {"rain": ["none"], "cloud": ["sunny", "mostly_sunny"]},
     ],
     "baseball_cap": [
-        {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light", "moderate"], "humidity": ["dry", "normal"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
+        {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind" : ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
+        {"rain": ["none", "light"], "wind" : ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["hot"]},
     ],
     "beanie": [
         {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
-        {"rain": ["none"], "cloud": ["mostly_cloudy", "overcast"], "humidity": ["dry", "normal"], "temp_min": ["normal"], "temp_max": ["normal"]},
+        {"cloud": ["mostly_cloudy", "overcast"], "wind" : ["light"], "humidity" : ["dry", "normal"], "temp_min": ["normal"], "temp_max": ["normal"]},
+        {"cloud": ["mostly_cloudy", "overcast"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
     ],
     "scarf": [
         {"temp_min": ["cold"]},
-        {"rain": ["none"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
+        {"rain": ["light", "moderate", "heavy"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
         {"wind": ["moderate", "strong"], "cloud": ["mostly_cloudy", "overcast"], "temp_min": ["normal"]},
     ],
     "handfan": [
@@ -101,7 +103,7 @@ CLOTHING_RULES = {
         {"rain": ["light", "moderate"], "wind": ["moderate", "strong"]},
     ],
     "jacket": [
-        {"temp_min": ["normal"], "temp_max": ["normal"], "wind": ["moderate", "strong"]},
+        {"rain": ["none"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
         {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
     ],
 }
