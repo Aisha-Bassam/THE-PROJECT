@@ -50,6 +50,14 @@ CATEGORIES = {
     "wind_dir": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
 }
 
+THRESHOLDS = {
+    "rain":     {"none" : 0.1, "light": 2.5, "moderate": 10.0},
+    "cloud":    {"sunny": 20, "mostly_sunny": 50, "mostly_cloudy": 85},
+    "wind":     {"light": 20, "moderate": 39},
+    "humidity": {"dry": 40, "normal": 70},
+    "temp":     {"cold": 13, "normal": 20}
+}
+
 
 # ── Clothing rules ─────────────────────────────────────────────────────────────
 
