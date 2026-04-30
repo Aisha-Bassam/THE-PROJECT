@@ -53,7 +53,7 @@ CATEGORIES = {
 THRESHOLDS = {
     "rain":     {"none" : 0.1, "light": 2.5, "moderate": 10.0},
     "cloud":    {"sunny": 20, "mostly_sunny": 50, "mostly_cloudy": 85},
-    "wind":     {"light": 20, "moderate": 39},
+    "wind":     {"light": 16, "moderate": 39},
     "humidity": {"dry": 40, "normal": 70},
     "temp":     {"cold": 13, "normal": 20}
 }
@@ -75,12 +75,13 @@ CLOTHING_RULES = {
         {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light", "moderate"], "humidity": ["dry", "normal"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
     ],
     "beanie": [
-        {"rain": ["none", "light"], "temp_min": ["cold"], "temp_max": ["cold", "normal"]},
+        {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
         {"rain": ["none"], "cloud": ["mostly_cloudy", "overcast"], "humidity": ["dry", "normal"], "temp_min": ["normal"], "temp_max": ["normal"]},
     ],
     "scarf": [
         {"temp_min": ["cold"]},
         {"rain": ["none"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
+        {"wind": ["moderate", "strong"], "cloud": ["mostly_cloudy", "overcast"], "temp_min": ["normal"]},
     ],
     "handfan": [
         {"rain": ["none"], "wind": ["light"], "temp_min": ["hot"], "temp_max": ["hot"]},
@@ -92,7 +93,7 @@ CLOTHING_RULES = {
         {"rain": ["moderate"], "cloud": ["mostly_cloudy", "overcast"]},
     ],
     "umbrella": [
-        {"rain": ["moderate"], "wind": ["light"]},
+        {"rain": ["moderate", "heavy"], "wind": ["light"]},
         {"rain": ["light"], "cloud": ["mostly_cloudy", "overcast"], "wind": ["light"]},
     ],
     "raincoat": [
@@ -100,7 +101,7 @@ CLOTHING_RULES = {
         {"rain": ["light", "moderate"], "wind": ["moderate", "strong"]},
     ],
     "jacket": [
-        {"temp_min": ["cold"], "wind": ["moderate", "strong"]},
+        {"temp_min": ["normal"], "temp_max": ["normal"], "wind": ["moderate", "strong"]},
         {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
     ],
 }
