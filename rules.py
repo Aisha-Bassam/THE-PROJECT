@@ -101,7 +101,7 @@ CLOTHING_RULES = {
 
     "baseball_cap": [
         {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
-        {"rain": ["none", "light"], "wind": ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["hot"]},
+        {"rain": ["none"], "wind": ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["hot"]},
     ],
 
     "beanie": [
@@ -114,6 +114,7 @@ CLOTHING_RULES = {
         {"temp_min": ["cold"]},
         {"rain": ["light", "moderate", "heavy"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
         {"wind": ["moderate", "strong"], "cloud": ["mostly_cloudy", "overcast"], "temp_min": ["normal"]},
+        {"rain": ["light", "moderate", "heavy"], "cloud": ["mostly_cloudy", "overcast"], "wind": ["light"], "temp_min": ["normal", "hot"]}
     ],
 
     "handfan": [
