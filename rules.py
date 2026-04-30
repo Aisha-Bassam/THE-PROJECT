@@ -158,6 +158,18 @@ CLOTHING_RULES = {
     ],
 }
 
+CLOTHING_KEY_COLUMNS = {
+    "umbrella":     ["rain", "wind"],
+    "raincoat":     ["rain", "wind"],
+    "baseball_cap": ["cloud", "temp_max"],
+    "beanie":       ["temp_min", "cloud"],
+    "scarf":        ["temp_min", "wind"],
+    "jacket":       ["temp_min", "temp_max"],
+    "welly":        ["rain", "cloud"],
+    "sunglasses":   ["cloud", "rain"],
+    "handfan":      ["temp_max", "wind"],
+}
+
 
 # ── Weather label priority ─────────────────────────────────────────────────────
 # Ordered from most to least dominant.
