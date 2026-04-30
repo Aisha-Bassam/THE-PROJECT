@@ -44,4 +44,11 @@ def confidence_ranker(columns, prediction_json):
         elif diff <= -DEVIATION_THRESHOLD:
             deviations[short_name] = "lower"
 
+    # Cap at 2 most deviant columns
+    deviations = dict(
+        sorted(deviations.items(),
+            key=lambda x: abs(column_scores[x[0]] - baseline),
+            reverse=True)[:2]
+    )
+
     return deviations

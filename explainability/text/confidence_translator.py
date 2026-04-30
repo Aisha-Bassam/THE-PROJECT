@@ -55,8 +55,10 @@ def confidence_translator(columns, prediction_json):
 
     if len(display_names) == 1:
         col_list = display_names[0]
-    else:
+    elif len(display_names) == 2:
         col_list = " and ".join(display_names)
+    else:
+        col_list = ", ".join(display_names[:-1]) + " and " + display_names[-1]
 
     # Step 3 — first sentence
     first = f"{label}: {score}% certainty on {col_list} prediction."
