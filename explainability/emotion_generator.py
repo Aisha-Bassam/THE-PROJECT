@@ -46,7 +46,6 @@ def emotion_generator(today_json):
 
     return {
         "expression": expression,
-        "label":      "PLACEHOLDER",
         "change":     change,
         "changed":    changed,
     }
