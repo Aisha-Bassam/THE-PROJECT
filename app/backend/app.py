@@ -89,29 +89,19 @@ def load_today_json(date, location):
 def index():
     return send_from_directory("../../app", "new_index.html")
 
-# @app.route("/static/<path:filename>")
-# def static_files(filename):
-#     static_dir = os.path.join(
-#         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-#         "app", "static"
-#     )
-#     return send_from_directory(static_dir, filename)
 
-# @app.route("/static/<path:filename>")
-# def static_files(filename):
-#     static_dir = "/Users/aishabassam/Documents/Final Project/THE PROJECT/app/static"
-#     return send_from_directory(static_dir, filename)
-
+_APP_STATIC = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    "app", "static"
+)
 
 @app.route("/static/js/<path:filename>")
 def static_files(filename):
-    static_dir = "/Users/aishabassam/Documents/Final Project/THE PROJECT/app/static/js"
-    return send_from_directory(static_dir, filename)
+    return send_from_directory(os.path.join(_APP_STATIC, "js"), filename)
 
 @app.route("/static/fox/<path:filename>")
 def fox_files(filename):
-    static_dir = "/Users/aishabassam/Documents/Final Project/THE PROJECT/app/static/fox"
-    return send_from_directory(static_dir, filename)
+    return send_from_directory(os.path.join(_APP_STATIC, "fox"), filename)
 
 
 @app.route("/api/scenario")
