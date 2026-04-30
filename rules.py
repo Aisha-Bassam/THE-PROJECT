@@ -20,6 +20,16 @@ SHORT_TO_COLUMN = {
     "wind_dir": "next_wind_direction_numerical",
 }
 
+SHORT_TO_DISPLAY = {
+    "rain":     "rainfall",
+    "cloud":    "cloud cover",
+    "wind":     "wind speed",
+    "humidity": "humidity",
+    "temp_min": "overnight temperature",
+    "temp_max": "daytime temperature",
+    "wind_dir": "wind direction",
+}
+
 # Scenario/input column name → short name
 # Used by day_pipeline to extract predictions from scenario DataFrames.
 # These use raw column names (no "next_" prefix) as saved by generate_scenario.

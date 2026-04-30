@@ -14,7 +14,7 @@ Calls shap_extractor internally — callers never touch shap_extractor directly.
 """
 
 from explainability.text.shap_extractor import shap_extractor
-from rules import SHORT_TO_COLUMN, SHAP_TOP_N
+from rules import SHORT_TO_COLUMN, SHAP_TOP_N, SHORT_TO_DISPLAY
 
 # Features that refer to YESTERDAY's observed values — prepend "yesterday's"
 _YESTERDAY_FEATURES = set(SHORT_TO_COLUMN.keys())  # all 7 short names
@@ -30,7 +30,8 @@ def _resolve_feature_name(feature):
     if feature == "day_of_year":
         return "time of year"
     if feature in _YESTERDAY_FEATURES:
-        return f"yesterday's {feature}"
+        display = SHORT_TO_DISPLAY.get(feature, feature)
+    return f"yesterday's {display}"
     return feature
 
 
@@ -86,9 +87,11 @@ def shap_translator(prediction_json, columns):
 
         # Assemble snippet
         if len(parts) == 1:
-            snippet = f"{column.capitalize()} is predicted mainly due to {parts[0]}."
+            col_display = SHORT_TO_DISPLAY.get(column, column.capitalize())
+            snippet = f"{col_display.capitalize()} is predicted mainly due to..."
         else:
-            snippet = f"{column.capitalize()} is predicted mainly due to {parts[0]} and {', '.join(parts[1:])}."
+            col_display = SHORT_TO_DISPLAY.get(column, column.capitalize())
+            snippet = f"{col_display.capitalize()} is predicted mainly due to {parts[0]} and {', '.join(parts[1:])}."
 
         result[column] = snippet
 
