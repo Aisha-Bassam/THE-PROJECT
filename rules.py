@@ -170,6 +170,9 @@ CLOTHING_KEY_COLUMNS = {
     "handfan":      ["temp_max", "wind"],
 }
 
+# Top N SHAP contributors to include in text explanations
+SHAP_TOP_N = 2
+
 
 # ── Weather label priority ─────────────────────────────────────────────────────
 # Ordered from most to least dominant.
