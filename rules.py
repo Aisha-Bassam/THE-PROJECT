@@ -50,12 +50,39 @@ CATEGORIES = {
     "wind_dir": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
 }
 
+# ── Thresholds ────────────────────────────────────────────────────────────────
+
+# Numeric boundaries for converting raw predicted values into category labels.
+# Used exclusively by thresholder.py — no other component reads these directly.
+# Each key maps to a dict of boundary values; thresholder.py interprets them
+# as upper bounds (< or <=) depending on the variable.
+# Grounded in Met Office, WMO, NWS, and Beaufort citations where available.
+# UK maritime climate adjustments applied for temperature and humidity.
+# Changing a value here propagates automatically to all downstream components.
+
 THRESHOLDS = {
-    "rain":     {"none" : 0.1, "light": 2.5, "moderate": 10.0},
+    # Rain (mm) — Met Office / WMO definitions
+    # none: < 0.1mm (dry), light: 0.1–2.5mm, moderate: 2.5–10mm, heavy: 10mm+
+    "rain":     {"none": 0.1, "light": 2.5, "moderate": 10.0},
+
+    # Cloud cover (%) — Met Office (sunny/overcast), NWS (middle bands)
+    # sunny: ≤20%, mostly_sunny: 21–50%, mostly_cloudy: 51–85%, overcast: 85%+
     "cloud":    {"sunny": 20, "mostly_sunny": 50, "mostly_cloudy": 85},
+
+    # Wind speed (km/h) — Beaufort scale adapted for UK context
+    # light: <16 km/h (Beaufort 1–3), moderate: 16–39 (Beaufort 4–5), strong: 39+ (Beaufort 6+)
     "wind":     {"light": 16, "moderate": 39},
+
+    # Humidity (%) — Met Office comfort guidance
+    # dry: <40%, normal: 40–70%, humid: 70%+
+    # Note: UK humidity rarely drops below 40% — "dry" triggers infrequently
     "humidity": {"dry": 40, "normal": 70},
-    "temp":     {"cold": 13, "normal": 20}
+
+    # Temperature (°C) — UK-specific, accounts for maritime climate feel
+    # cold: ≤13°C, normal: 14–19°C, hot: 20°C+
+    # Grounded in UK experience: 17°C can feel hot in still sunny conditions,
+    # 13°C can feel cold even without wind chill
+    "temp":     {"cold": 13, "normal": 20},
 }
 
 
@@ -67,41 +94,79 @@ THRESHOLDS = {
 # First matching rule wins — its columns become the driving categories for text generation.
 
 CLOTHING_RULES = {
+    # ── Sunglasses ────────────────────────────────────────────────────────────
+    # Sun shower (light rain + sunny) or dry sunny/mostly sunny conditions
     "sunglasses": [
         {"rain": ["light"], "cloud": ["sunny"]},
         {"rain": ["none"], "cloud": ["sunny", "mostly_sunny"]},
     ],
+
+    # ── Baseball cap ──────────────────────────────────────────────────────────
+    # Sunny/mostly sunny days — not too windy (cap would fly off at strong wind)
+    # Also hot cloudy days — shade needed regardless of cloud cover
+    # Never overlaps with beanie: beanie never triggers on temp_max: hot
     "baseball_cap": [
-        {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind" : ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
-        {"rain": ["none", "light"], "wind" : ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["hot"]},
+        {"rain": ["none", "light"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
+        {"rain": ["none", "light"], "wind": ["light", "moderate"], "temp_min": ["normal", "hot"], "temp_max": ["hot"]},
     ],
+
+    # ── Beanie ────────────────────────────────────────────────────────────────
+    # Cold days regardless of other conditions
+    # Cloudy + light wind + dry/normal humidity: humid light-wind days feel too warm for a beanie
+    # Cloudy + moderate/strong wind: wind chill warrants beanie regardless of humidity
     "beanie": [
         {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
-        {"cloud": ["mostly_cloudy", "overcast"], "wind" : ["light"], "humidity" : ["dry", "normal"], "temp_min": ["normal"], "temp_max": ["normal"]},
+        {"cloud": ["mostly_cloudy", "overcast"], "wind": ["light"], "humidity": ["dry", "normal"], "temp_min": ["normal"], "temp_max": ["normal"]},
         {"cloud": ["mostly_cloudy", "overcast"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
     ],
+
+    # ── Scarf ─────────────────────────────────────────────────────────────────
+    # Cold min temp always warrants a scarf
+    # Rainy + windy normal days: wind chill through rain — scarf with raincoat
+    # Windy + cloudy normal/hot days: wind protection regardless of rain
+    # Note: rule 3 has no temp_max restriction — on hot windy cloudy days,
+    # text layer should clarify scarf is for wind protection, not warmth
     "scarf": [
         {"temp_min": ["cold"]},
         {"rain": ["light", "moderate", "heavy"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
         {"wind": ["moderate", "strong"], "cloud": ["mostly_cloudy", "overcast"], "temp_min": ["normal"]},
     ],
+
+    # ── Handfan ───────────────────────────────────────────────────────────────
+    # Hot still days, sunny warm days, or humid cloudy warm days
+    # Never triggers with rain (rain > none) or strong wind
     "handfan": [
         {"rain": ["none"], "wind": ["light"], "temp_min": ["hot"], "temp_max": ["hot"]},
         {"rain": ["none"], "cloud": ["sunny", "mostly_sunny"], "wind": ["light"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
         {"rain": ["none"], "cloud": ["mostly_cloudy", "overcast"], "wind": ["light"], "humidity": ["humid"], "temp_min": ["normal", "hot"], "temp_max": ["normal", "hot"]},
     ],
+
+    # ── Wellies ───────────────────────────────────────────────────────────────
+    # Heavy rain always, or moderate rain on already cloudy/wet-feeling days
     "welly": [
         {"rain": ["heavy"]},
         {"rain": ["moderate"], "cloud": ["mostly_cloudy", "overcast"]},
     ],
+
+    # ── Umbrella ──────────────────────────────────────────────────────────────
+    # Moderate/heavy rain with light wind (strong wind makes umbrella unusable)
+    # Light rain + cloudy + light wind (drizzly overcast days)
     "umbrella": [
         {"rain": ["moderate", "heavy"], "wind": ["light"]},
         {"rain": ["light"], "cloud": ["mostly_cloudy", "overcast"], "wind": ["light"]},
     ],
+
+    # ── Raincoat ──────────────────────────────────────────────────────────────
+    # Heavy rain always, or any rain with moderate/strong wind
+    # Strong wind makes umbrella unusable — raincoat is the only option
     "raincoat": [
         {"rain": ["heavy"]},
         {"rain": ["light", "moderate"], "wind": ["moderate", "strong"]},
     ],
+
+    # ── Jacket ────────────────────────────────────────────────────────────────
+    # Dry windy normal temp days — wind chill without rain (rain → raincoat instead)
+    # Cold days with cold/normal max — straightforward cold weather jacket
     "jacket": [
         {"rain": ["none"], "wind": ["moderate", "strong"], "temp_min": ["normal"], "temp_max": ["normal"]},
         {"temp_min": ["cold"], "temp_max": ["cold", "normal"]},
