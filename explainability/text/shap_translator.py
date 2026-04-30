@@ -93,3 +93,29 @@ def shap_translator(prediction_json, columns):
         result[column] = snippet
 
     return result
+
+
+if __name__ == "__main__":
+    from explainability.utils import load_prediction
+
+    # Load TODAY JSON for July 2 scenario (YESTERDAY = 01072023, location = london)
+    # TODAY JSON is saved as TODAY_02072023_london.json
+    prediction_json = load_prediction("02072023", "london", prefix="TODAY")
+
+    # Umbrella: driving categories {"rain": "light", "cloud": "mostly_cloudy", "wind": "light"}
+    # Option C: CLOTHING_KEY_COLUMNS ["rain", "wind"] ∩ driving categories → ["rain", "wind"]
+    umbrella_columns = ["rain", "wind"]
+
+    # Scarf: driving categories {"rain": "light", "cloud": "mostly_cloudy", "wind": "light", "temp_min": "normal"}
+    # Option C: CLOTHING_KEY_COLUMNS ["temp_min", "wind"] ∩ driving categories → ["temp_min", "wind"]
+    scarf_columns = ["temp_min", "wind"]
+
+    print("=== Umbrella ===")
+    umbrella_snippets = shap_translator(prediction_json, umbrella_columns)
+    for col, snippet in umbrella_snippets.items():
+        print(f"  {col}: {snippet}")
+
+    print("\n=== Scarf ===")
+    scarf_snippets = shap_translator(prediction_json, scarf_columns)
+    for col, snippet in scarf_snippets.items():
+        print(f"  {col}: {snippet}")
