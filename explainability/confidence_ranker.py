@@ -40,8 +40,8 @@ def confidence_ranker(columns, prediction_json):
     for short_name, score in column_scores.items():
         diff = score - baseline
         if diff >= DEVIATION_THRESHOLD:
-            deviations[short_name] = "high"
+            deviations[short_name] = "higher"
         elif diff <= -DEVIATION_THRESHOLD:
-            deviations[short_name] = "low"
+            deviations[short_name] = "lower"
 
     return deviations
