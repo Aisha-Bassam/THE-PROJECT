@@ -36,6 +36,20 @@ SCENARIO_COLUMN_TO_SHORT = {
 # Full model output column name → short name (reverse of above)
 COLUMN_TO_SHORT = {v: k for k, v in SHORT_TO_COLUMN.items()}
 
+# DAY_TO_SEASON — sorted by end_day ascending.
+# Winter wraps around the year boundary, so it is split into two entries.
+# Usage: find the first entry where day_of_year <= end_day.
+# If no entry matches (day > 334), it is Winter (end of year).
+# 2023 assumption (non-leap year). Day 1 = Jan 1, Day 365 = Dec 31.
+
+DAY_TO_SEASON = [
+    (59,  "Winter"),   # Jan 1 – Feb 28
+    (151, "Spring"),   # Mar 1 – May 31
+    (243, "Summer"),   # Jun 1 – Aug 31
+    (334, "Autumn"),   # Sep 1 – Nov 30
+    (365, "Winter"),   # Dec 1 – Dec 31
+]
+
 # ── Category definitions ───────────────────────────────────────────────────────
 
 # All valid categories per short name
