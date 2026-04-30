@@ -9,26 +9,26 @@ Calls shap_extractor internally — callers never touch shap_extractor directly.
 # DISSERTATION NOTE: (Ch4 - Methodology/Implementation)
 # Translating raw SHAP values into plain language is the core XAI mechanism
 # in WeatherFox. Rather than exposing numbers, the system communicates which
-# yesterday's conditions most influenced today's prediction, and in which
+# of yesterday's conditions most influenced today's prediction, and in which
 # direction — making the model's reasoning interpretable to non-expert users.
 """
 
 from explainability.text.shap_extractor import shap_extractor
-from rules import DAY_TO_SEASON, SHORT_TO_COLUMN, SHAP_TOP_N
+from rules import SHORT_TO_COLUMN, SHAP_TOP_N
 
 # Features that refer to YESTERDAY's observed values — prepend "yesterday's"
 _YESTERDAY_FEATURES = set(SHORT_TO_COLUMN.keys())  # all 7 short names
 
 
-def _resolve_feature_name(feature, day_of_year):
+def _resolve_feature_name(feature):
     """
     Converts a raw feature short name into a display-ready string.
-    - day_of_year → resolved season name (e.g. "Summer")
+    - day_of_year → "time of year" (calendar position, not a yesterday value)
     - known input features → prepend "yesterday's"
     - unknown → passed through as-is (guard fallback)
     """
     if feature == "day_of_year":
-        return next(name for end, name in DAY_TO_SEASON if day_of_year <= end)
+        return "time of year"
     if feature in _YESTERDAY_FEATURES:
         return f"yesterday's {feature}"
     return feature
@@ -37,8 +37,8 @@ def _resolve_feature_name(feature, day_of_year):
 def _select_contributors(contributors):
     """
     Selects top SHAP_TOP_N contributors by magnitude.
-    Fallback: if contributors is empty, returns empty list.
     If fewer than SHAP_TOP_N exist, returns all of them.
+    If empty, returns empty list — caller handles this case.
 
     # DISSERTATION NOTE: (Ch4 - Methodology/Implementation)
     # Limiting to top N prevents information overload in the popup —
@@ -59,12 +59,11 @@ def shap_translator(prediction_json, columns):
                 "rain": "Rain is predicted mainly due to yesterday's rain
                          (increases) and humidity (increases).",
                 "wind": "Wind is predicted mainly due to yesterday's wind
-                         (decreases) and Summer (decreases)."
+                         (decreases) and time of year (decreases)."
             }
 
     Returns empty string as snippet if no contributors selected (edge case).
     """
-    day_of_year = prediction_json["input_features"]["day_of_year"]
     result = {}
 
     for column in columns:
@@ -82,7 +81,7 @@ def shap_translator(prediction_json, columns):
         # Resolve display names
         parts = []
         for c in selected:
-            display_name = _resolve_feature_name(c["feature"], day_of_year)
+            display_name = _resolve_feature_name(c["feature"])
             parts.append(f"{display_name} ({c['direction']})")
 
         # Assemble snippet
