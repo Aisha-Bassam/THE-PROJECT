@@ -15,7 +15,7 @@ Returns a self-describing dict so callers never need to track context separately
 # which grounds the plain-language explanations shown to users.
 """
 
-from rules import SHORT_TO_COLUMN, SCENARIO_COLUMN_TO_SHORT, DAY_TO_SEASON
+from rules import SHORT_TO_COLUMN, SCENARIO_COLUMN_TO_SHORT
 
 
 def shap_extractor(prediction_json, column):
@@ -33,13 +33,10 @@ def shap_extractor(prediction_json, column):
 
     Sorted by abs(shap_value) descending (most influential first).
     location_code is filtered silently.
-    day_of_year is resolved to the current season via DAY_TO_SEASON.
     """
     full_name  = SHORT_TO_COLUMN[column]
     shap_block = prediction_json["variables"][full_name]["shap"]
 
-    # Read once — used only if day_of_year is present in the feature list
-    day_of_year = prediction_json["input_features"]["day_of_year"]
 
     contributors = []
     for feature_name, shap_value in zip(shap_block["features"], shap_block["values"]):
@@ -47,15 +44,20 @@ def shap_extractor(prediction_json, column):
         if feature_name == "location_code":
             continue
 
-        if feature_name == "day_of_year":
-            feature_short = next(name for end, name in DAY_TO_SEASON if day_of_year <= end)
+        # Guard: skip unknown feature names rather than raising KeyError
+        feature_short = SCENARIO_COLUMN_TO_SHORT.get(feature_name, feature_name)
+
+        if shap_value > 0:
+            direction = "increases"
+        elif shap_value < 0:
+            direction = "decreases"
         else:
-            feature_short = SCENARIO_COLUMN_TO_SHORT[feature_name]
+            direction = "no"
 
         contributors.append({
             "feature":    feature_short,
             "shap_value": shap_value,
-            "direction":  "increases" if shap_value > 0 else "decreases",
+            "direction":  direction,
         })
 
     contributors.sort(key=lambda x: abs(x["shap_value"]), reverse=True)
