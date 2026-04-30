@@ -17,6 +17,8 @@ from rules import SHORT_TO_COLUMN
 from explainability.confidence_tier import confidence_tier
 from explainability.prediction_tracker import prediction_tracker
 
+APOLOGY_MIN_CHANGES = 2
+
 # ── Core function ─────────────────────────────────────────────────────────────
 
 def emotion_generator(today_json):
@@ -41,11 +43,12 @@ def emotion_generator(today_json):
     changed     = list(changes.keys())
 
     # Override expression if forecast changed significantly
-    if change:
+    if len(changes) >= APOLOGY_MIN_CHANGES:
         expression = "apologetic"
 
     return {
         "expression": expression,
         "change":     change,
         "changed":    changed,
+        "changes": changes
     }
