@@ -13,7 +13,7 @@ One column at a time — caller decides what to threshold.
 # UK context — acknowledged.
 """
 
-from rules import CATEGORIES
+from rules import CATEGORIES, THRESHOLDS
 
 def threshold(short_name, value):
     """
@@ -30,11 +30,11 @@ def threshold(short_name, value):
     # ── Rain ──────────────────────────────────────────────────────────────────
     # Source: Met Office / WMO
     if short_name == "rain":
-        if value < 0.1:
+        if value < THRESHOLDS["rain"]["none"]:
             return "none"
-        elif value < 1.0:
+        elif value < THRESHOLDS["rain"]["light"]:
             return "light"
-        elif value < 10.0:
+        elif value < THRESHOLDS["rain"]["moderate"]:
             return "moderate"
         else:
             return "heavy"
@@ -42,11 +42,11 @@ def threshold(short_name, value):
     # ── Cloud cover ───────────────────────────────────────────────────────────
     # Source: Met Office (sunny/overcast), NWS (middle bands)
     elif short_name == "cloud":
-        if value <= 25:
+        if value <= THRESHOLDS["cloud"]["sunny"]:
             return "sunny"
-        elif value <= 50:
+        elif value <= THRESHOLDS["cloud"]["mostly_sunny"]:
             return "mostly_sunny"
-        elif value <= 85:
+        elif value <= THRESHOLDS["cloud"]["mostly_cloudy"]:
             return "mostly_cloudy"
         else:
             return "overcast"
@@ -54,9 +54,9 @@ def threshold(short_name, value):
     # ── Wind speed ────────────────────────────────────────────────────────────
     # Source: Met Office Beaufort scale
     elif short_name == "wind":
-        if value < 20:
+        if value < THRESHOLDS["wind"]["light"]:
             return "light"
-        elif value < 40:
+        elif value < THRESHOLDS["wind"]["moderate"]:
             return "moderate"
         else:
             return "strong"
@@ -64,9 +64,9 @@ def threshold(short_name, value):
     # ── Humidity ──────────────────────────────────────────────────────────────
     # Source: Met Office comfort guidance
     elif short_name == "humidity":
-        if value < 60:
+        if value < THRESHOLDS["humidity"]["dry"]:
             return "dry"
-        elif value <= 80:
+        elif value <= THRESHOLDS["humidity"]["normal"]:
             return "normal"
         else:
             return "humid"
@@ -74,9 +74,9 @@ def threshold(short_name, value):
     # ── Min temperature ───────────────────────────────────────────────────────
     # Source: Met Office Cold Weather Alerts
     elif short_name == "temp_min":
-        if value <= 10:
+        if value <= THRESHOLDS["temp"]["cold"]:
             return "cold"
-        elif value < 25:
+        elif value < THRESHOLDS["temp"]["normal"]:
             return "normal"
         else:
             return "hot"
@@ -84,9 +84,9 @@ def threshold(short_name, value):
     # ── Max temperature ───────────────────────────────────────────────────────
     # Source: Met Office Heat Health Alert
     elif short_name == "temp_max":
-        if value <= 10:
+        if value <= THRESHOLDS["temp"]["cold"]:
             return "cold"
-        elif value < 25:
+        elif value < THRESHOLDS["temp"]["normal"]:
             return "normal"
         else:
             return "hot"
