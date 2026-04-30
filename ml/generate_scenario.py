@@ -236,3 +236,15 @@ if __name__ == "__main__":
         print(key)
         print(value)
         print()
+
+
+    date     = "2023-07-02"
+    location = "London"
+
+    print(f"Generating 7-day scenario for {location}, starting {date}...\n")
+    results = generate_seven_predictions(date, location)
+
+    for key, value in results.items():
+        print(key)
+        print(value)
+        print()

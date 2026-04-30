@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "date": "2023-07-04",
+    "location": "London",
+    "composite_confidence": 69.96
+  },
+  "input_features": {
+    "min_temp \u00b0c": 12.9102,
+    "max_temp \u00b0c": 22.5828,
+    "rain mm": 0.6026,
+    "humidity %": 62.0703,
+    "cloud_cover %": 54.5164,
+    "wind_speed km/h": 13.2331,
+    "wind_direction_numerical": 242.8717,
+    "day_of_year": 184.0,
+    "location_code": 355.0
+  },
+  "variables": {
+    "next_min_temp \u00b0c": {
+      "prediction": 13.865,
+      "confidence": 75.21,
+      "shap": {
+        "base_value": 7.30719,
+        "values": [
+          4.613801,
+          1.448697,
+          0.031174,
+          0.330612,
+          0.034495,
+          0.096239,
+          -0.090939,
+          0.09414,
+          -0.000365
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    },
+    "next_max_temp \u00b0c": {
+      "prediction": 21.3794,
+      "confidence": 83.93,
+      "shap": {
+        "base_value": 13.175162,
+        "values": [
+          0.088912,
+          7.967972,
+          0.046166,
+          0.101658,
+          -0.057926,
+          -0.197577,
+          -0.035609,
+          0.290596,
+          4.1e-05
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    },
+    "next_rain mm": {
+      "prediction": 1.0858,
+      "confidence": 88.42,
+      "shap": {
+        "base_value": 2.447035,
+        "values": [
+          -0.268297,
+          -0.712955,
+          -0.194057,
+          0.456633,
+          -0.038414,
+          0.017186,
+          -0.221514,
+          -0.394434,
+          -0.005409
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    },
+    "next_humidity %": {
+      "prediction": 68.3233,
+      "confidence": 68.27,
+      "shap": {
+        "base_value": 81.284088,
+        "values": [
+          0.541149,
+          -0.858185,
+          0.429153,
+          -14.110701,
+          0.36116,
+          0.537133,
+          0.386144,
+          -0.246359,
+          -0.000289
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    },
+    "next_cloud_cover %": {
+      "prediction": 55.2994,
+      "confidence": 64.12,
+      "shap": {
+        "base_value": 57.092567,
+        "values": [
+          -1.220486,
+          -3.512611,
+          1.367249,
+          0.762969,
+          -1.491793,
+          1.11021,
+          0.369267,
+          0.82412,
+          -0.002122
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    },
+    "next_wind_speed km/h": {
+      "prediction": 13.4076,
+      "confidence": 84.51,
+      "shap": {
+        "base_value": 16.659684,
+        "values": [
+          -0.220171,
+          -0.917477,
+          0.09542,
+          -0.241609,
+          0.028164,
+          -1.726036,
+          -0.031179,
+          -0.238851,
+          -0.000347
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    },
+    "next_wind_direction_numerical": {
+      "prediction": 205.3939,
+      "confidence": 39.71,
+      "shap": {
+        "base_value": 201.403565,
+        "values": [
+          -2.077781,
+          4.236336,
+          0.132613,
+          2.73348,
+          -6.176845,
+          -7.788582,
+          20.364179,
+          -7.434936,
+          0.00188
+        ],
+        "features": [
+          "min_temp \u00b0c",
+          "max_temp \u00b0c",
+          "rain mm",
+          "humidity %",
+          "cloud_cover %",
+          "wind_speed km/h",
+          "wind_direction_numerical",
+          "day_of_year",
+          "location_code"
+        ]
+      }
+    }
+  }
+}
