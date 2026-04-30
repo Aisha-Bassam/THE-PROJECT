@@ -15,7 +15,7 @@ and secondary labels — each with SHAP and confidence for their driving columns
 
 from explainability.text.shap_translator import shap_translator
 from explainability.text.confidence_translator import confidence_translator
-from rules import WEATHER_LABELS, SHORT_TO_DISPLAY
+from rules import WEATHER_LABELS, SHORT_TO_DISPLAY, CATEGORY_TO_DISPLAY
 
 
 def _explain_columns(columns, categories, today_json):
@@ -38,7 +38,8 @@ def _explain_columns(columns, categories, today_json):
     for col in columns:
         display  = SHORT_TO_DISPLAY.get(col, col)
         category = categories.get(col, "")
-        parts.append(f"{category} {display}")
+        category_display = CATEGORY_TO_DISPLAY.get(category, category)
+        parts.append(f"{category_display} {display}") 
 
     because = ", ".join(parts) + " expected today."
     because = because.capitalize()

@@ -74,6 +74,23 @@ CATEGORIES = {
     "wind_dir": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
 }
 
+CATEGORY_TO_DISPLAY = {
+    "mostly_cloudy": "mostly cloudy",
+    "mostly_sunny":  "mostly sunny",
+    "none":          "no",
+    "light":         "light",
+    "moderate":      "moderate",
+    "heavy":         "heavy",
+    "sunny":         "sunny",
+    "overcast":      "overcast",
+    "cold":          "cold",
+    "normal":        "normal",
+    "hot":           "hot",
+    "dry":           "dry",
+    "humid":         "humid",
+    "strong":        "strong",
+}
+
 # ── Thresholds ────────────────────────────────────────────────────────────────
 
 # Numeric boundaries for converting raw predicted values into category labels.

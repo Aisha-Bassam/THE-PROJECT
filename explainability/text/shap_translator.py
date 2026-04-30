@@ -14,13 +14,13 @@ Calls shap_extractor internally — callers never touch shap_extractor directly.
 """
 
 from explainability.text.shap_extractor import shap_extractor
-from rules import SHORT_TO_COLUMN, SHAP_TOP_N, SHORT_TO_DISPLAY
+from rules import SHORT_TO_COLUMN, SHAP_TOP_N, SHORT_TO_DISPLAY, DAY_TO_SEASON
 
 # Features that refer to YESTERDAY's observed values — prepend "yesterday's"
 _YESTERDAY_FEATURES = set(SHORT_TO_COLUMN.keys())  # all 7 short names
 
 
-def _resolve_feature_name(feature):
+def _resolve_feature_name(feature, day_of_year):
     """
     Converts a raw feature short name into a display-ready string.
     - day_of_year → "time of year" (calendar position, not a yesterday value)
@@ -28,11 +28,11 @@ def _resolve_feature_name(feature):
     - unknown → passed through as-is (guard fallback)
     """
     if feature == "day_of_year":
-        return "time of year"
+        return next(name for end, name in DAY_TO_SEASON if day_of_year <= end)
     if feature in _YESTERDAY_FEATURES:
-        display = SHORT_TO_DISPLAY.get(feature, feature)
-    return f"yesterday's {display}"
+        return f"yesterday's {SHORT_TO_DISPLAY.get(feature, feature)}"
     return feature
+
 
 
 def _select_contributors(contributors):
@@ -65,6 +65,7 @@ def shap_translator(prediction_json, columns):
 
     Returns empty string as snippet if no contributors selected (edge case).
     """
+    day_of_year = prediction_json["input_features"]["day_of_year"]
     result = {}
 
     for column in columns:
@@ -82,7 +83,7 @@ def shap_translator(prediction_json, columns):
         # Resolve display names
         parts = []
         for c in selected:
-            display_name = _resolve_feature_name(c["feature"])
+            display_name = _resolve_feature_name(c["feature"], day_of_year)
             parts.append(f"{display_name} ({c['direction']})")
 
         # Assemble snippet
