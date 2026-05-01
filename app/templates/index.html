@@ -2,14 +2,12 @@
 {% extends 'base.html' %}
 
 {% block styles %}
-<style>
   .prototype-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     align-items: start;
   }
-</style>
 {% endblock %}
 
 
@@ -24,7 +22,7 @@
 
 {# ── Below table — control detail widgets ─────────────────────────────── #}
 {% block below_table %}
-  <div id="controlDetails" style="display:none">
+  <div id="controlDetails">
     {% include 'partials/weather_detail_control.html' %}
   </div>
 {% endblock %}

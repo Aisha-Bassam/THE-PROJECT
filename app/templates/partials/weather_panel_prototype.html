@@ -170,11 +170,11 @@
         data.text.weather[icon_label] || "—";
     }
 
-    // Wire icon click — prototype only
-    document.getElementById("protoWpIcon").addEventListener("click", (e) => {
+    // Wire icon click — prototype only (onclick overwrites on re-render, no duplicate listeners)
+    document.getElementById("protoWpIcon").onclick = (e) => {
       e.stopPropagation();
       closeAllPopups();
       document.getElementById("weatherPopup").classList.add("visible");
-    });
+    };
   }
 </script>

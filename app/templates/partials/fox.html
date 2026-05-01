@@ -1,8 +1,8 @@
 {# app/templates/partials/fox.html #}
 {#
   Fox column — right side of prototype view.
-  Fox layer stack with per-layer click handlers.
-  One shared popup — title and body swap based on clicked layer.
+  Fox layer stack displayed as stacked PNGs.
+  Clickable pills below the fox (one per active layer) open the shared popup.
 
   DISSERTATION NOTE (Ch6 — Design):
   The fox character is the primary XAI interface in WeatherFox.
@@ -16,11 +16,11 @@
 
   <div class="fox-prompt">Tap a layer to find out why</div>
 
-  <!-- Fox layer stack -->
+  <!-- Fox layer stack — PNGs only, no click overlays -->
   <div class="fox-stack-wrap">
     <div class="fox-stack" id="foxStack"></div>
 
-    <!-- Shared popup — anchored to fox-col, floats left -->
+    <!-- Shared popup — floats left of fox stack -->
     <div class="popup" id="foxPopup">
       <div class="popup-header">
         <div class="popup-title" id="foxPopupTitle">—</div>
@@ -28,8 +28,10 @@
       </div>
       <div class="popup-body" id="foxPopupBody">—</div>
     </div>
-
   </div>
+
+  <!-- Layer pills — one per active layer, replaces invisible stacked triggers -->
+  <div class="fox-pills" id="foxPills"></div>
 
 </div>
 
@@ -38,7 +40,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     padding: 32px 24px;
     position: relative;
   }
@@ -56,20 +57,10 @@
     position: relative;
   }
 
-  /* Fox layer stack — PNGs stacked absolutely on top of each other */
-  /*
-   * DISSERTATION NOTE (Ch7 — Implementation):
-   * Each PNG shares the same canvas dimensions and is stacked absolutely.
-   * JS renders only the layers returned by fox_wrapper, in LAYER_ORDER.
-   * Each layer is independently clickable via a transparent overlay div.
-   */
   .fox-stack {
     position: relative;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    border: 2px solid rgba(255,255,255,0.15);
+    width: 240px;
+    height: 240px;
   }
 
   .fox-stack img {
@@ -78,26 +69,37 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* pointer-events: none so clicks pass through to layer divs */
-    pointer-events: none;
   }
 
-  /* Clickable overlay per layer */
-  .fox-layer-trigger {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    background: transparent;
-    transition: background 0.2s ease;
+  /* Pills row below fox */
+  .fox-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 18px;
+    max-width: 260px;
   }
 
-  .fox-layer-trigger:hover {
+  .fox-pill {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
     background: rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
   }
 
-  /* Fox popup — left of fox stack */
+  .fox-pill:hover {
+    background: rgba(255,255,255,0.18);
+    color: var(--text-white);
+  }
+
+  /* Fox popup — floats left of the stack */
   #foxPopup {
     width: 240px;
     position: absolute;
@@ -119,30 +121,37 @@
 </style>
 
 <script>
-  // Emotion layer names — clicking these shows emotion text
   const EMOTION_LAYERS = new Set(["confident", "neutral", "hesitant", "apologetic"]);
 
+  function pillLabel(layerName) {
+    if (layerName === "fox_base") return "Outfit";
+    return layerName.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  }
+
   function renderFox(data) {
-    const stack  = document.getElementById("foxStack");
-    const layers = data.fox.layers;
+    const stack   = document.getElementById("foxStack");
+    const pills   = document.getElementById("foxPills");
+    const layers  = data.fox.layers;
     const clothes = data.text.clothes;
     const emotion = data.text.emotion;
 
-    // Clear existing layers
+    // Build image stack
     stack.innerHTML = "";
-
     layers.forEach(layerName => {
-      // PNG image
       const img = document.createElement("img");
       img.src = `/static/fox/${layerName}.png`;
       img.alt = layerName;
       stack.appendChild(img);
+    });
 
-      // Clickable overlay — skip fox_base if no clothing (handled separately)
-      const trigger = document.createElement("div");
-      trigger.className = "fox-layer-trigger";
+    // Build pills — one per layer, click opens popup
+    pills.innerHTML = "";
+    layers.forEach(layerName => {
+      const pill = document.createElement("button");
+      pill.className = "fox-pill";
+      pill.textContent = pillLabel(layerName);
 
-      trigger.addEventListener("click", (e) => {
+      pill.addEventListener("click", (e) => {
         e.stopPropagation();
         closeAllPopups();
 
@@ -152,17 +161,12 @@
         if (layerName === "fox_base") {
           title = "Today's Outfit";
           body  = clothes["fox_base"] || "Nothing special to wear today.";
-
         } else if (EMOTION_LAYERS.has(layerName)) {
           title = "Fox says";
           body  = emotion[layerName] || "—";
-
         } else {
-          // Clothing item
-          title = layerName.replace("_", " ").replace(
-            /\b\w/g, c => c.toUpperCase()
-          );
-          body = clothes[layerName] || "—";
+          title = pillLabel(layerName);
+          body  = clothes[layerName] || "—";
         }
 
         document.getElementById("foxPopupTitle").textContent = title;
@@ -170,7 +174,7 @@
         document.getElementById("foxPopup").classList.add("visible");
       });
 
-      stack.appendChild(trigger);
+      pills.appendChild(pill);
     });
   }
 </script>
