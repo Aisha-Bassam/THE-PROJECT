@@ -77,7 +77,7 @@ def confidence_translator(columns, prediction_json):
 
     second = ", ".join(clauses).capitalize() + "."
 
-    return f"{first} {second}"
+    return f"{first} \n{second}"
 
 
 if __name__ == "__main__":

@@ -53,7 +53,7 @@ def clothes_text(outfit, today_json):
         # Step 3 — SHAP snippets (one per filtered column)
         if filtered_columns:
             shap_output = shap_translator(today_json, filtered_columns)
-            shap_sentences = " ".join(
+            shap_sentences = "\n".join(
                 snippet for snippet in shap_output.values() if snippet
             )
         else:
@@ -61,7 +61,7 @@ def clothes_text(outfit, today_json):
 
         # Step 4 — confidence string
         if filtered_columns:
-            confidence_sentence = confidence_translator(filtered_columns, today_json)
+            confidence_sentence = f"\n{confidence_translator(filtered_columns, today_json)}"
         else:
             confidence_sentence = ""
 

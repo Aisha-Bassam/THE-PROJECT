@@ -42,7 +42,7 @@ def _explain_columns(columns, categories, today_json):
         category_display = CATEGORY_TO_DISPLAY.get(category, category)
         parts.append(f"{category_display} {display}") 
 
-    because = ", ".join(parts) + " expected today."
+    because = ", ".join(parts) + " expected today.\n"
     because = because.capitalize()
 
     # SHAP
@@ -51,6 +51,7 @@ def _explain_columns(columns, categories, today_json):
 
     # Confidence
     confidence_sentence = confidence_translator(columns, today_json)
+    confidence_sentence = f"\n{confidence_sentence}"
 
     block = " ".join(p for p in [because, shap_sentences, confidence_sentence] if p)
     return block
@@ -97,7 +98,7 @@ def weather_text(today_json, categories, icon_label):
         if new_columns:
             block = _explain_columns(new_columns, categories, today_json)
             if block:
-                blocks.append(f"{label}: {block}")
+                blocks.append(f"\n{label}: {block}")
 
     join_text = " ".join(blocks)
     return {icon_label: join_text.replace("_", " ")}

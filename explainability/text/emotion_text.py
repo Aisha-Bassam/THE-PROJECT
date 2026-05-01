@@ -50,6 +50,8 @@ def emotion_text(today_json, emotion_output, label):
     else:
         expression_sentence = EXPRESSION_TO_TEXT[expression]
 
+    expression_sentence = f"{expression_sentence}"
+
     # Step 2 — label
     label_sentence = f"Today's forecast: {label}."
 
@@ -65,10 +67,11 @@ def emotion_text(today_json, emotion_output, label):
 
     # Step 5 — assemble
     parts = [
-        f"{expression_sentence}; {label_sentence}",
-        confidence_sentence,
+        f"{expression_sentence}.\n {label_sentence}\n",
+        f"{confidence_sentence}",
     ]
     if change_sentence:
+        change_sentence = f"\n{change_sentence}"
         parts.append(change_sentence)
 
     return {expression: " ".join(parts)}
