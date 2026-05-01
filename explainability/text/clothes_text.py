@@ -74,6 +74,9 @@ def clothes_text(outfit, today_json):
 
         result[item] = " ".join(text_parts)
 
+    for item, text in result.items():
+        result[item] = text.replace("_", " ")
+
     result["fox_base"] = outfit_text(result)    
     return result
 

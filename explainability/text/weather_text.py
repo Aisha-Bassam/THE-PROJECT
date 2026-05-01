@@ -99,7 +99,8 @@ def weather_text(today_json, categories, icon_label):
             if block:
                 blocks.append(f"{label}: {block}")
 
-    return {icon_label: " ".join(blocks)}
+    join_text = " ".join(blocks)
+    return {icon_label: join_text.replace("_", " ")}
 
 
 if __name__ == "__main__":
