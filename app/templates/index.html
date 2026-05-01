@@ -5,7 +5,14 @@
 
 {# ── Control view ────────────────────────────────────────────────────── #}
 {% block control_content %}
-  {% include 'partials/weather_panel_control.html' %}
+  {% include 'partials/weather_panel.html' %}
+{% endblock %}
+
+{# ── Below table — control detail widgets ────────────────────────────── #}
+{% block below_table %}
+  <div id="controlDetails" style="display:none">
+    {% include 'partials/weather_detail_control.html' %}
+  </div>
 {% endblock %}
 
 
