@@ -44,37 +44,39 @@
 
   </div>
 
-</div>
+  <!--
+    Weather insight popup — inside proto-panel so position:absolute is
+    relative to proto-panel's position:relative containing block.
 
-<!--
-  Weather insight popup — prototype only.
-  Triggered by clicking the weather icon in weather_panel.html.
-  Position: below the icon, anchored to proto-panel.
+    DISSERTATION NOTE (Ch6 — Design):
+    Two XAI entry points: icon (weather-first) and fox (character-first).
+    Accommodates different user mental models from the survey findings.
+  -->
+  <div class="popup" id="weatherPopup">
+    <div class="popup-header">
+      <div class="popup-title">Weather Insight</div>
+      <button class="popup-close" onclick="closeAllPopups()">✕</button>
+    </div>
+    <div class="popup-body" id="weatherPopupBody">
+      Loading...
+    </div>
+  </div>
 
-  DISSERTATION NOTE (Ch6 — Design):
-  Two XAI entry points: icon (weather-first) and fox (character-first).
-  Accommodates different user mental models from the survey findings.
--->
-<div class="popup" id="weatherPopup">
-  <div class="popup-header">
-    <div class="popup-title">Weather Insight</div>
-    <button class="popup-close" onclick="closeAllPopups()">✕</button>
-  </div>
-  <div class="popup-body" id="weatherPopupBody">
-    Loading...
-  </div>
 </div>
 
 <style>
   .proto-panel {
-    /* sizing handled by prototype-layout grid in index.html */
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   .proto-divider {
+    margin-top: auto;
+    margin-left: 28px;
+    margin-right: 28px;
     height: 1px;
     background: var(--card-border);
-    margin: 0 28px;
   }
 
   .proto-details {
@@ -117,21 +119,21 @@
     color: var(--text-dim);
   }
 
-  /* Weather popup — below icon */
+  /* Weather popup — right of icon */
   #weatherPopup {
-    width: 244px;
-    left: 28px;
-    top: calc(100% + 12px);
+    width: 220px;
+    left: calc(28px + 4rem + 14px);
+    top: 82px;
   }
 
   #weatherPopup::before {
     content: '';
     position: absolute;
-    left: 24px;
-    top: -8px;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 8px solid var(--popup-bg);
+    left: -8px;
+    top: 16px;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-right: 8px solid var(--popup-bg);
   }
 
   /* Icon clickable in prototype */

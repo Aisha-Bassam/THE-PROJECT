@@ -524,7 +524,9 @@
         </table>
       </div>
 
-      {% block below_table %}{% endblock %}
+      <div id="belowTable">
+        {% block below_table %}{% endblock %}
+      </div>
 
     </div>
   </div>
@@ -645,6 +647,7 @@
     document.getElementById('viewPrototype').classList.toggle('active', view === 'prototype');
     document.getElementById('btnControl').classList.toggle('active',    view === 'control');
     document.getElementById('btnPrototype').classList.toggle('active',  view === 'prototype');
+    document.getElementById('belowTable').style.display = view === 'control' ? '' : 'none';
   }
 
   // ── Sidebar toggle ──────────────────────────────────────────────────
