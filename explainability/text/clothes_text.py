@@ -76,6 +76,31 @@ def clothes_text(outfit, today_json):
 
     return result
 
+def first_name(text: str) -> str:
+    if not text:
+        return ""
+    first = text.split()[0]
+    return first.rstrip(':')
+
+
+def outfit_text(result):
+    outfit = []
+    for item, text in result.items():
+        outfit.append(first_name(text))
+
+    if len(outfit) == 0:
+        return ""
+    
+    if len(outfit) == 1:
+        return outfit[0]
+    
+    if len(outfit) == 2:
+        return f"{outfit[0]} and {outfit[1]}"
+    
+    # n >= 3
+    return f"{', '.join(outfit[:-1])}, and {outfit[-1]}"
+
+
 
 if __name__ == "__main__":
     import sys
@@ -109,6 +134,8 @@ if __name__ == "__main__":
     print()
 
     result = clothes_text(outfit, today_json)
+
+    print(outfit_text(result))
 
     for item, text in result.items():
         print(f"=== {item.upper()} ===")
