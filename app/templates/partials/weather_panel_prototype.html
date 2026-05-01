@@ -3,6 +3,7 @@
   Prototype weather panel — left column of the prototype view.
   Contains shared weather data (via weather_panel.html) plus
   inline detail row at the bottom, all within one bordered card.
+  Weather icon is clickable — opens weather insight popup (prototype only).
 
   DISSERTATION NOTE (Ch6 — Design):
   The consolidated panel keeps weather data compact to leave room
@@ -45,9 +46,29 @@
 
 </div>
 
+<!--
+  Weather insight popup — prototype only.
+  Triggered by clicking the weather icon in weather_panel.html.
+  Position: below the icon, anchored to proto-panel.
+
+  DISSERTATION NOTE (Ch6 — Design):
+  Two XAI entry points: icon (weather-first) and fox (character-first).
+  Accommodates different user mental models from the survey findings.
+-->
+<div class="popup" id="weatherPopup">
+  <div class="popup-header">
+    <div class="popup-title">Weather Insight</div>
+    <button class="popup-close" onclick="closeAllPopups()">✕</button>
+  </div>
+  <div class="popup-body" id="weatherPopupBody">
+    Loading...
+  </div>
+</div>
+
 <style>
   .proto-panel {
     /* sizing handled by prototype-layout grid in index.html */
+    position: relative;
   }
 
   .proto-divider {
@@ -95,10 +116,34 @@
     font-weight: 300;
     color: var(--text-dim);
   }
+
+  /* Weather popup — below icon */
+  #weatherPopup {
+    width: 244px;
+    left: 28px;
+    top: calc(100% + 12px);
+  }
+
+  #weatherPopup::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: -8px;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 8px solid var(--popup-bg);
+  }
+
+  /* Icon clickable in prototype */
+  #wpIcon {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  #wpIcon:hover { transform: scale(1.1); }
 </style>
 
 <script>
-  function renderPrototypeDetails() {
+  function renderPrototypeDetails(data) {
     const rain     = window.wpRainGroup;
     const humidity = window.wpHumidityGroup;
     const wind     = window.wpWindGroup;
@@ -117,5 +162,18 @@
       `${wind.speed} km/h`;
     document.getElementById("protoWindSub").textContent =
       `${wind.dir} · ${wind.name} wind`;
+
+    // Populate weather popup text (from text pipeline)
+    if (data.text && data.text.weather) {
+      document.getElementById("weatherPopupBody").textContent =
+        data.text.weather;
+    }
+
+    // Wire icon click — prototype only
+    document.getElementById("wpIcon").addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeAllPopups();
+      document.getElementById("weatherPopup").classList.add("visible");
+    });
   }
 </script>
