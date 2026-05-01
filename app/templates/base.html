@@ -456,11 +456,11 @@
     <div class="logo">Weather<span>Fox</span></div>
 
     <div class="view-toggle">
-      <button class="toggle-btn" id="btnControl"
+      <button class="toggle-btn active" id="btnControl"
               onclick="switchView('control')">
         Weather Forecast
       </button>
-      <button class="toggle-btn active" id="btnPrototype"
+      <button class="toggle-btn" id="btnPrototype"
               onclick="switchView('prototype')">
         Weather Fox
       </button>
@@ -494,12 +494,12 @@
     <div class="main-content">
 
       <!-- View: Weather Forecast (control) -->
-      <div class="view" id="viewControl">
+      <div class="view active" id="viewControl">
         {% block control_content %}{% endblock %}
       </div>
 
       <!-- View: Weather Fox (prototype) -->
-      <div class="view active" id="viewPrototype">
+      <div class="view" id="viewPrototype">
         {% block prototype_content %}{% endblock %}
       </div>
 
