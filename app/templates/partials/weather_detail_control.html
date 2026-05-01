@@ -1,0 +1,101 @@
+{# app/templates/partials/weather_detail_control.html #}
+{#
+  Detail cards for control view — shown below the table.
+  Reads from window.wpRainGroup, window.wpHumidityGroup, window.wpWindGroup
+  set by renderWeatherPanel() in weather_panel.html.
+
+  DISSERTATION NOTE (Ch6 — Design):
+  Control view mirrors standard weather app conventions — data presented
+  as separate labelled widgets with no XAI elements. Used as baseline
+  for comparison in the user study.
+#}
+
+<div class="detail-cards" id="ctrlDetailCards">
+
+  <!-- Rain -->
+  <div class="detail-card">
+    <div class="detail-card-label">Rain</div>
+    <div class="detail-card-main" id="ctrlRainPercent">—</div>
+    <div class="detail-card-sub" id="ctrlRainMm">—</div>
+  </div>
+
+  <!-- Humidity -->
+  <div class="detail-card">
+    <div class="detail-card-label">Humidity</div>
+    <div class="detail-card-main" id="ctrlHumidity">—</div>
+    <div class="detail-card-sub" id="ctrlHumidityName">—</div>
+  </div>
+
+  <!-- Wind -->
+  <div class="detail-card">
+    <div class="detail-card-label">Wind</div>
+    <div class="detail-card-main" id="ctrlWindSpeed">—</div>
+    <div class="detail-card-sub" id="ctrlWindSub">—</div>
+  </div>
+
+</div>
+
+<style>
+  .detail-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .detail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  .detail-card-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    margin-bottom: 10px;
+  }
+
+  .detail-card-main {
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text-white);
+    margin-bottom: 6px;
+  }
+
+  .detail-card-sub {
+    font-size: 0.78rem;
+    font-weight: 300;
+    color: var(--text-dim);
+  }
+</style>
+
+<script>
+  function renderControlDetails() {
+    const rain     = window.wpRainGroup;
+    const humidity = window.wpHumidityGroup;
+    const wind     = window.wpWindGroup;
+
+    document.getElementById("ctrlRainPercent").textContent =
+      `${Math.round(rain.percent * 100)}%`;
+    document.getElementById("ctrlRainMm").textContent =
+      `${rain.mm} mm`;
+
+    document.getElementById("ctrlHumidity").textContent =
+      `${humidity.value}%`;
+    document.getElementById("ctrlHumidityName").textContent =
+      humidity.name;
+
+    document.getElementById("ctrlWindSpeed").textContent =
+      `${wind.speed} km/h`;
+    document.getElementById("ctrlWindSub").textContent =
+      `${wind.dir} · ${wind.name} wind`;
+  }
+</script>
