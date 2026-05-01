@@ -1,23 +1,4 @@
-"""
-app/backend/app.py
-------------------
-Flask backend for WeatherFox prototype.
-
-Exposes one route:
-    GET /api/scenario
-
-Loads pre-generated scenario and TODAY JSON from disk,
-runs weather_pipeline and fox flow, returns everything
-the UI needs in one JSON response.
-
-Run from project root:
-    python3 app/backend/app.py
-
-# DISSERTATION NOTE: (Ch4 - Methodology/Implementation)
-# Flask acts as the orchestration layer — it does not run models or compute
-# SHAP. All heavy computation happens at generate_scenario time. Flask only
-# reads files and runs lightweight pipeline functions at request time.
-"""
+# app/backend/app.py
 
 import sys
 import os
@@ -25,36 +6,82 @@ import os
 # Add project root to path so all layers are importable
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+
 import json
+import glob
+
 import pandas as pd
-from flask import Flask, jsonify
-from flask_cors import CORS
-from flask import send_from_directory
+from flask import Flask, jsonify, render_template, request
 
 from explainability.weather_pipeline import weather_pipeline
-from explainability.day_pipeline import day_pipeline
 from explainability.clothes_mapper import clothes_mapper
 from explainability.emotion_generator import emotion_generator
 from explainability.fox_wrapper import fox_wrapper
+from explainability.text.clothes_text import clothes_text
+from explainability.text.weather_text import weather_text
+from explainability.text.emotion_text import emotion_text
 
-app = Flask(__name__)
-CORS(app)  # allows index.html to call the API from the browser
+# ── Paths ────────────────────────────────────────────────────────────────────
+# app/backend/app.py → project root is two levels up
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# ── Config ────────────────────────────────────────────────────────────────────
+SCENARIOS_DIR   = os.path.join(ROOT_DIR, "outputs", "scenarios")
+TEMPLATES_DIR   = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
+STATIC_DIR      = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
 
-SCENARIOS_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "outputs", "scenarios"
-)
+# ── Flask init ───────────────────────────────────────────────────────────────
+app = Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
 
-# Hardcoded for now — will become route parameters later
-DATE     = "01072023"
-LOCATION = "london"
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# ── Scenario discovery ───────────────────────────────────────────────────────
+# DISSERTATION NOTE (Ch7 — Implementation):
+# Scenarios are pre-generated offline. Flask discovers them at startup by
+# globbing the scenarios directory — no hardcoded list required.
+
+def discover_scenarios():
+    """
+    Scans SCENARIOS_DIR for SCENARIO_*.json files and returns a sorted list.
+
+    Output: list of dicts — [{ date, location, label }, ...]
+            date     — DDMMYYYY string   e.g. "01072023"
+            location — lowercase string  e.g. "london"
+            label    — display string    e.g. "1 Jul 2023 · London"
+    """
+    pattern = os.path.join(SCENARIOS_DIR, "SCENARIO_*.json")
+    scenarios = []
+
+    for path in sorted(glob.glob(pattern)):
+        name  = os.path.basename(path).replace(".json", "")   # SCENARIO_01072023_london
+        parts = name.split("_")                                # ["SCENARIO", "01072023", "london"]
+
+        if len(parts) != 3:
+            continue
+
+        date     = parts[1]   # "01072023"
+        location = parts[2]   # "london"
+
+        # Format label — DDMMYYYY → "1 Jul 2023 · London"
+        parsed = pd.to_datetime(date, format="%d%m%Y")
+        label  = parsed.strftime("%-d %b %Y") + " · " + location.capitalize()
+
+        scenarios.append({"date": date, "location": location, "label": label})
+
+    return scenarios
+
+
+AVAILABLE_SCENARIOS = discover_scenarios()
+
+
+# ── Loaders ──────────────────────────────────────────────────────────────────
 
 def load_scenario(date, location):
-    """Loads SCENARIO_<date>_<location>.json from disk as a dict of DataFrames."""
+    """
+    Loads SCENARIO_<date>_<location>.json from disk as a dict of DataFrames.
+
+    Input:  date (DDMMYYYY), location (lowercase string)
+    Output: dict — { Date, YESTERDAY, TODAY, TOMORROW, FOUR, FIVE, SIX, SEVEN }
+            each day value is a single-row DataFrame
+    """
     filepath = os.path.join(SCENARIOS_DIR, f"SCENARIO_{date}_{location}.json")
     with open(filepath) as f:
         raw = json.load(f)
@@ -69,11 +96,10 @@ def load_scenario(date, location):
 def load_today_json(date, location):
     """
     Loads TODAY_<date>_<location>.json from disk.
-    TODAY's date is one day after YESTERDAY's date.
-    Date format in filename is DDMMYYYY.
+    Input date is YESTERDAY (DDMMYYYY) — file uses the following day.
+
+    e.g. date = "01072023" → loads TODAY_02072023_london.json
     """
-    # TODAY filename uses the day after yesterday
-    # e.g. YESTERDAY = 01072023 → TODAY file = TODAY_02072023_london.json
     yesterday = pd.to_datetime(date, format="%d%m%Y")
     today_str  = (yesterday + pd.Timedelta(days=1)).strftime("%d%m%Y")
 
@@ -82,47 +108,45 @@ def load_today_json(date, location):
         return json.load(f)
 
 
-# ── Routes ────────────────────────────────────────────────────────────────────
-
+# ── Routes ───────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
-    return send_from_directory("../../app", "new_index.html")
-
-
-_APP_STATIC = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "app", "static"
-)
-
-@app.route("/static/js/<path:filename>")
-def static_files(filename):
-    return send_from_directory(os.path.join(_APP_STATIC, "js"), filename)
-
-@app.route("/static/fox/<path:filename>")
-def fox_files(filename):
-    return send_from_directory(os.path.join(_APP_STATIC, "fox"), filename)
+    """Serves the main page. Passes available scenarios to the sidebar."""
+    return render_template("index.html", scenarios=AVAILABLE_SCENARIOS)
 
 
 @app.route("/api/scenario")
-def scenario():
+def api_scenario():
     """
-    Returns everything the UI needs for the current scenario:
-    - date
-    - weather: 7-day table data
-    - today: today's display dict (extracted from weather)
-    - fox: layer stack + emotion
+    Returns all data needed to render one scenario.
+
+    Query params: date (DDMMYYYY), location (lowercase string)
+
+    Response shape:
+        date     — DDMMYYYY string (YESTERDAY's date, anchors the scenario)
+        today    — display-ready dict for the TODAY card
+        weather  — list of 7 day dicts ({ day, display, categories })
+        fox      — { layers: [...] }
+        text     — { clothes: {...}, weather: {...}, emotion: {...} }
+
+    # DISSERTATION NOTE (Ch7 — Implementation):
+    # All ML and SHAP work is done offline. At request time Flask only runs
+    # lightweight display logic: pipeline reshaping, clothes/emotion mapping,
+    # and text generation. No model inference happens here.
     """
+    date     = request.args.get("date")
+    location = request.args.get("location")
 
-    # Step 1 — load files from disk
-    scene      = load_scenario(DATE, LOCATION)
-    today_json = load_today_json(DATE, LOCATION)
+    # Step 1 — load pre-generated scenario files from disk
+    scene      = load_scenario(date, location)
+    today_json = load_today_json(date, location)
 
-    # Step 2 — run weather pipeline (7-day table)
+    # Step 2 — run weather pipeline (all 7 days → display + categories)
     weather = weather_pipeline(scene)
 
-    # Step 3 — extract today's categories from weather pipeline output
-    # TODAY is index 1 (YESTERDAY is index 0)
+    # Step 3 — extract TODAY's categories (index 1 — YESTERDAY is index 0)
+    today_display    = weather["days"][1]["display"]
     today_categories = weather["days"][1]["categories"]
 
     # Step 4 — fox flow
@@ -130,25 +154,23 @@ def scenario():
     emotion = emotion_generator(today_json)
     layers  = fox_wrapper(outfit, emotion)
 
-    # Step 5 — package and return
-    response = {
-        "date":    weather["date"],
-        "weather": weather["days"],
-        "today":   weather["days"][1]["display"],
-        "fox": {
-            "layers":  layers,
-            "emotion": emotion,
-        }
+    # Step 5 — text generation
+    text = {
+        "clothes": clothes_text(outfit, today_json),
+        "weather": weather_text(today_json, today_categories, today_display["icon_label"]),
+        "emotion": emotion_text(today_json, emotion, today_display["label"]),
     }
 
-    return jsonify(response)
+    return jsonify({
+        "date":    weather["date"],
+        "today":   today_display,
+        "weather": weather["days"],
+        "fox":     {"layers": layers},
+        "text":    text,
+    })
 
 
-# ── Run ───────────────────────────────────────────────────────────────────────
+# ── Entry point ──────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("STATIC DIR:", os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "app", "static"
-    ))
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
