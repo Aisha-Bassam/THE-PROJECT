@@ -1,0 +1,176 @@
+{# app/templates/partials/fox.html #}
+{#
+  Fox column — right side of prototype view.
+  Fox layer stack with per-layer click handlers.
+  One shared popup — title and body swap based on clicked layer.
+
+  DISSERTATION NOTE (Ch6 — Design):
+  The fox character is the primary XAI interface in WeatherFox.
+  Each visible layer is independently clickable — clothing layers explain
+  why that item was recommended, emotion layers explain model confidence.
+  This grounds the recommendation in the model's reasoning without
+  exposing raw outputs to the user.
+#}
+
+<div class="fox-col card">
+
+  <div class="fox-prompt">Tap a layer to find out why</div>
+
+  <!-- Fox layer stack -->
+  <div class="fox-stack-wrap">
+    <div class="fox-stack" id="foxStack"></div>
+
+    <!-- Shared popup — anchored to fox-col, floats left -->
+    <div class="popup" id="foxPopup">
+      <div class="popup-header">
+        <div class="popup-title" id="foxPopupTitle">—</div>
+        <button class="popup-close" onclick="closeAllPopups()">✕</button>
+      </div>
+      <div class="popup-body" id="foxPopupBody">—</div>
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+  .fox-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    position: relative;
+  }
+
+  .fox-prompt {
+    font-size: 0.67rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+  }
+
+  .fox-stack-wrap {
+    position: relative;
+  }
+
+  /* Fox layer stack — PNGs stacked absolutely on top of each other */
+  /*
+   * DISSERTATION NOTE (Ch7 — Implementation):
+   * Each PNG shares the same canvas dimensions and is stacked absolutely.
+   * JS renders only the layers returned by fox_wrapper, in LAYER_ORDER.
+   * Each layer is independently clickable via a transparent overlay div.
+   */
+  .fox-stack {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+
+  .fox-stack img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* pointer-events: none so clicks pass through to layer divs */
+    pointer-events: none;
+  }
+
+  /* Clickable overlay per layer */
+  .fox-layer-trigger {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    background: transparent;
+    transition: background 0.2s ease;
+  }
+
+  .fox-layer-trigger:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* Fox popup — left of fox stack */
+  #foxPopup {
+    width: 240px;
+    position: absolute;
+    right: calc(100% + 16px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  #foxPopup::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 8px solid var(--popup-bg);
+  }
+</style>
+
+<script>
+  // Emotion layer names — clicking these shows emotion text
+  const EMOTION_LAYERS = new Set(["confident", "neutral", "hesitant", "apologetic"]);
+
+  function renderFox(data) {
+    const stack  = document.getElementById("foxStack");
+    const layers = data.fox.layers;
+    const clothes = data.text.clothes;
+    const emotion = data.text.emotion;
+
+    // Clear existing layers
+    stack.innerHTML = "";
+
+    layers.forEach(layerName => {
+      // PNG image
+      const img = document.createElement("img");
+      img.src = `/static/fox/${layerName}.png`;
+      img.alt = layerName;
+      stack.appendChild(img);
+
+      // Clickable overlay — skip fox_base if no clothing (handled separately)
+      const trigger = document.createElement("div");
+      trigger.className = "fox-layer-trigger";
+
+      trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeAllPopups();
+
+        let title = "";
+        let body  = "";
+
+        if (layerName === "fox_base") {
+          title = "Today's Outfit";
+          body  = clothes["fox_base"] || "Nothing special to wear today.";
+
+        } else if (EMOTION_LAYERS.has(layerName)) {
+          title = "Fox says";
+          body  = emotion[layerName] || "—";
+
+        } else {
+          // Clothing item
+          title = layerName.replace("_", " ").replace(
+            /\b\w/g, c => c.toUpperCase()
+          );
+          body = clothes[layerName] || "—";
+        }
+
+        document.getElementById("foxPopupTitle").textContent = title;
+        document.getElementById("foxPopupBody").textContent  = body;
+        document.getElementById("foxPopup").classList.add("visible");
+      });
+
+      stack.appendChild(trigger);
+    });
+  }
+</script>
