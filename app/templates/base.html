@@ -539,12 +539,6 @@
     });
   }
 
-  function rainDotClass(rain_percent) {
-    // rain_percent is 0.0–1.0 from utils.rain_percent()
-    if (rain_percent >= 0.5) return "high";
-    if (rain_percent >= 0.25) return "med";
-    return "low";
-  }
 
   function renderTable(days, scenarioDate) {
     const dates = buildDates(scenarioDate);
@@ -563,7 +557,6 @@
         : "";
 
       const rainPct  = Math.round(d.rain_percent * 100);
-      const dotClass = rainDotClass(d.rain_percent);
 
       tbody.innerHTML += `
         <tr class="${isToday ? 'today-row' : ''}">
@@ -573,8 +566,10 @@
           <td class="temp-low">${d.min_temp}°C</td>
           <td>
             <div class="rain-pill">
-              <div class="rain-dot ${dotClass}"
-                   style="opacity: ${d.rain_percent}"></div>
+              <div class="rain-dot" 
+                style="opacity:    
+                ${Math.max(0.15, d.rain_percent)}">
+              </div>
               ${rainPct}%
             </div>
           </td>
