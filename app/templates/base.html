@@ -14,7 +14,7 @@
   <style>
     /* ─── Design tokens ─────────────────────────────────────────────── */
     :root {
-      --bg-top:        #3365a1;
+      --bg-top:        #619fe8;
       --bg-bot:        #1A2E45;
       --bg-current:    #3365a1; /* updated dynamically by JS from BACKGROUND_MAP */
       --card-bg:       rgba(255, 255, 255, 0.10);
@@ -509,7 +509,7 @@
 
   // ── Background colour ───────────────────────────────────────────────
   function renderBackground(icon_label) {
-    const colour = BACKGROUND_MAP[icon_label] || "#3365a1";
+    const colour = BACKGROUND_MAP[icon_label] || "#619fe8";
     document.documentElement.style.setProperty('--bg-top', colour);
     document.documentElement.style.setProperty('--bg-bot', shadeColour(colour, -40));
   }
