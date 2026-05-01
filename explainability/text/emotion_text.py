@@ -71,7 +71,7 @@ def emotion_text(today_json, emotion_output, label):
     if change_sentence:
         parts.append(change_sentence)
 
-    return " ".join(parts)
+    return {expression: " ".join(parts)}
 
 
 if __name__ == "__main__":

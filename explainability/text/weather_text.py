@@ -15,6 +15,7 @@ and secondary labels — each with SHAP and confidence for their driving columns
 
 from explainability.text.shap_translator import shap_translator
 from explainability.text.confidence_translator import confidence_translator
+from explainability.weather_mapper import labeller
 from rules import WEATHER_LABELS, SHORT_TO_DISPLAY, CATEGORY_TO_DISPLAY
 
 
@@ -55,7 +56,7 @@ def _explain_columns(columns, categories, today_json):
     return block
 
 
-def weather_text(today_json, mapper_output, categories):
+def weather_text(today_json, categories, icon_label):
     """
     Generates a plain-language weather explanation for the insight popup.
 
@@ -65,6 +66,7 @@ def weather_text(today_json, mapper_output, categories):
 
     Output: single string — full weather explanation paragraph
     """
+    mapper_output  = weather_mapper(categories)
     dominant  = mapper_output["dominant"]
     secondary = mapper_output["secondary"]
 
@@ -97,7 +99,7 @@ def weather_text(today_json, mapper_output, categories):
             if block:
                 blocks.append(f"{label}: {block}")
 
-    return " ".join(blocks)
+    return {icon_label: " ".join(blocks)}
 
 
 if __name__ == "__main__":
