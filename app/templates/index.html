@@ -1,0 +1,43 @@
+{# app/templates/index.html #}
+{# Extends base.html — fills in the two view blocks and wires render functions #}
+{% extends 'base.html' %}
+
+
+{# ── Control view ────────────────────────────────────────────────────── #}
+{% block control_content %}
+  {% include 'partials/weather_panel_control.html' %}
+{% endblock %}
+
+
+{# ── Prototype view ───────────────────────────────────────────────────── #}
+{% block prototype_content %}
+  <div class="prototype-layout">
+    {% include 'partials/weather_panel_prototype.html' %}
+    {% include 'partials/fox.html' %}
+  </div>
+{% endblock %}
+
+
+{# ── View-specific scripts ────────────────────────────────────────────── #}
+{% block scripts %}
+<script>
+  /*
+   * DISSERTATION NOTE (Ch7 — Implementation):
+   * renderControl and renderPrototype are called by base.html after every
+   * scenario fetch. They populate their respective views from the same
+   * data object — ensuring control and prototype always show the same
+   * underlying prediction, differing only in presentation.
+   */
+
+  function renderControl(data) {
+    renderWeatherPanel(data);
+    renderControlDetails(data.today);
+  }
+
+  function renderPrototype(data) {
+    renderWeatherPanel(data);
+    renderPrototypeDetails(data.today);
+    renderFox(data.fox);
+  }
+</script>
+{% endblock %}
