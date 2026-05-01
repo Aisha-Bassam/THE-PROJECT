@@ -1,0 +1,121 @@
+{# app/templates/partials/weather_panel_prototype.html #}
+{#
+  Prototype weather panel — left column of the prototype view.
+  Contains shared weather data (via weather_panel.html) plus
+  inline detail row at the bottom, all within one bordered card.
+
+  DISSERTATION NOTE (Ch6 — Design):
+  The consolidated panel keeps weather data compact to leave room
+  for the fox column on the right. Details are shown inline rather
+  than as separate widgets — a deliberate contrast with the control
+  view to reflect the different design philosophy of WeatherFox.
+#}
+
+<div class="card proto-panel">
+
+  {# Shared: icon, temps, label, date — also sets window.wp* groups #}
+  {% include 'partials/weather_panel.html' %}
+
+  <div class="proto-divider"></div>
+
+  <div class="proto-details">
+
+    <!-- Rain -->
+    <div class="proto-detail-item">
+      <div class="proto-detail-label">Rain</div>
+      <div class="proto-detail-main" id="protoRainPercent">—</div>
+      <div class="proto-detail-sub" id="protoRainMm">—</div>
+    </div>
+
+    <!-- Humidity -->
+    <div class="proto-detail-item">
+      <div class="proto-detail-label">Humidity</div>
+      <div class="proto-detail-main" id="protoHumidity">—</div>
+      <div class="proto-detail-sub" id="protoHumidityName">—</div>
+    </div>
+
+    <!-- Wind -->
+    <div class="proto-detail-item">
+      <div class="proto-detail-label">Wind</div>
+      <div class="proto-detail-main" id="protoWindSpeed">—</div>
+      <div class="proto-detail-sub" id="protoWindSub">—</div>
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+  .proto-panel {
+    /* sizing handled by prototype-layout grid in index.html */
+  }
+
+  .proto-divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 0 28px;
+  }
+
+  .proto-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 16px 28px 20px;
+    gap: 0;
+  }
+
+  .proto-detail-item {
+    padding: 0 12px;
+    border-right: 1px solid var(--card-border);
+  }
+
+  .proto-detail-item:first-child { padding-left: 0; }
+  .proto-detail-item:last-child  { border-right: none; padding-right: 0; }
+
+  .proto-detail-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    margin-bottom: 6px;
+  }
+
+  .proto-detail-main {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--text-white);
+    margin-bottom: 4px;
+  }
+
+  .proto-detail-sub {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-dim);
+  }
+</style>
+
+<script>
+  function renderPrototypeDetails() {
+    const rain     = window.wpRainGroup;
+    const humidity = window.wpHumidityGroup;
+    const wind     = window.wpWindGroup;
+
+    document.getElementById("protoRainPercent").textContent =
+      `${Math.round(rain.percent * 100)}%`;
+    document.getElementById("protoRainMm").textContent =
+      `${rain.mm} mm`;
+
+    document.getElementById("protoHumidity").textContent =
+      `${humidity.value}%`;
+    document.getElementById("protoHumidityName").textContent =
+      humidity.name;
+
+    document.getElementById("protoWindSpeed").textContent =
+      `${wind.speed} km/h`;
+    document.getElementById("protoWindSub").textContent =
+      `${wind.dir} · ${wind.name} wind`;
+  }
+</script>
