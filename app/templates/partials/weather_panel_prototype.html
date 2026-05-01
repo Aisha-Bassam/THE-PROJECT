@@ -165,8 +165,9 @@
 
     // Populate weather popup text (from text pipeline)
     if (data.text && data.text.weather) {
+      const icon_label = data.today.icon_label;
       document.getElementById("weatherPopupBody").textContent =
-        data.text.weather;
+        data.text.weather[icon_label] || "—";
     }
 
     // Wire icon click — prototype only
