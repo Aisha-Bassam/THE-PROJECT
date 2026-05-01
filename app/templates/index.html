@@ -5,7 +5,9 @@
 
 {# ── Control view ────────────────────────────────────────────────────── #}
 {% block control_content %}
-  {% include 'partials/weather_panel.html' %}
+  <div class="card">
+    {% include 'partials/weather_panel.html' %}
+  </div>
 {% endblock %}
 
 {# ── Below table — control detail widgets ────────────────────────────── #}
