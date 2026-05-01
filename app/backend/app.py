@@ -1,4 +1,27 @@
 # app/backend/app.py
+"""
+app/backend/app.py
+------------------
+Flask backend for WeatherFox prototype.
+
+Exposes two routes:
+    GET /              — serves the main UI (index.html)
+    GET /api/scenario  — returns all data needed to render a scenario
+
+Loads pre-generated scenario and TODAY JSON from disk,
+runs weather_pipeline and fox flow, returns everything
+the UI needs in one JSON response.
+
+Run from project root:
+    python app/backend/app.py
+
+# DISSERTATION NOTE (Ch7 — Implementation):
+# Flask acts as the orchestration layer — it does not run models or compute
+# SHAP. All heavy computation happens at generate_scenario time (offline).
+# At request time Flask only reads files, runs lightweight pipeline
+# functions, and returns a structured JSON response to the frontend.
+# This separation keeps the prototype fast and stateless.
+"""
 
 import sys
 import os
@@ -6,10 +29,8 @@ import os
 # Add project root to path so all layers are importable
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-
 import json
 import glob
-
 import pandas as pd
 from flask import Flask, jsonify, render_template, request
 
@@ -21,46 +42,46 @@ from explainability.text.clothes_text import clothes_text
 from explainability.text.weather_text import weather_text
 from explainability.text.emotion_text import emotion_text
 
-# ── Paths ────────────────────────────────────────────────────────────────────
-# app/backend/app.py → project root is two levels up
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# ── Paths ─────────────────────────────────────────────────────────────────────
 
-SCENARIOS_DIR   = os.path.join(ROOT_DIR, "outputs", "scenarios")
-TEMPLATES_DIR   = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
-STATIC_DIR      = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
+ROOT_DIR      = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SCENARIOS_DIR = os.path.join(ROOT_DIR, "outputs", "scenarios")
+TEMPLATES_DIR = os.path.join(ROOT_DIR, "app", "templates")
+STATIC_DIR    = os.path.join(ROOT_DIR, "app", "static")
 
-# ── Flask init ───────────────────────────────────────────────────────────────
+# ── Flask init ─────────────────────────────────────────────────────────────────
+
 app = Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
 
-
-# ── Scenario discovery ───────────────────────────────────────────────────────
+# ── Scenario discovery ─────────────────────────────────────────────────────────
 # DISSERTATION NOTE (Ch7 — Implementation):
 # Scenarios are pre-generated offline. Flask discovers them at startup by
 # globbing the scenarios directory — no hardcoded list required.
+# Adding a new scenario only requires dropping a file in the folder
+# and restarting Flask.
 
 def discover_scenarios():
     """
-    Scans SCENARIOS_DIR for SCENARIO_*.json files and returns a sorted list.
+    Scans SCENARIOS_DIR for SCENARIO_*.json files.
 
-    Output: list of dicts — [{ date, location, label }, ...]
+    Output: sorted list of dicts — [{ date, location, label }, ...]
             date     — DDMMYYYY string   e.g. "01072023"
             location — lowercase string  e.g. "london"
             label    — display string    e.g. "1 Jul 2023 · London"
     """
-    pattern = os.path.join(SCENARIOS_DIR, "SCENARIO_*.json")
+    pattern   = os.path.join(SCENARIOS_DIR, "SCENARIO_*.json")
     scenarios = []
 
     for path in sorted(glob.glob(pattern)):
-        name  = os.path.basename(path).replace(".json", "")   # SCENARIO_01072023_london
-        parts = name.split("_")                                # ["SCENARIO", "01072023", "london"]
+        name  = os.path.basename(path).replace(".json", "")
+        parts = name.split("_")
 
         if len(parts) != 3:
             continue
 
-        date     = parts[1]   # "01072023"
-        location = parts[2]   # "london"
+        date     = parts[1]
+        location = parts[2]
 
-        # Format label — DDMMYYYY → "1 Jul 2023 · London"
         parsed = pd.to_datetime(date, format="%d%m%Y")
         label  = parsed.strftime("%-d %b %Y") + " · " + location.capitalize()
 
@@ -71,8 +92,7 @@ def discover_scenarios():
 
 AVAILABLE_SCENARIOS = discover_scenarios()
 
-
-# ── Loaders ──────────────────────────────────────────────────────────────────
+# ── Loaders ───────────────────────────────────────────────────────────────────
 
 def load_scenario(date, location):
     """
@@ -107,8 +127,7 @@ def load_today_json(date, location):
     with open(filepath) as f:
         return json.load(f)
 
-
-# ── Routes ───────────────────────────────────────────────────────────────────
+# ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
@@ -124,11 +143,11 @@ def api_scenario():
     Query params: date (DDMMYYYY), location (lowercase string)
 
     Response shape:
-        date     — DDMMYYYY string (YESTERDAY's date, anchors the scenario)
-        today    — display-ready dict for the TODAY card
-        weather  — list of 7 day dicts ({ day, display, categories })
-        fox      — { layers: [...] }
-        text     — { clothes: {...}, weather: {...}, emotion: {...} }
+        date    — DDMMYYYY string (YESTERDAY's date, anchors the scenario)
+        today   — display-ready dict for the TODAY card
+        weather — list of 7 day dicts ({ day, display, categories })
+        fox     — { layers: [...] }
+        text    — { clothes: {...}, weather: {...}, emotion: {...} }
 
     # DISSERTATION NOTE (Ch7 — Implementation):
     # All ML and SHAP work is done offline. At request time Flask only runs
@@ -145,7 +164,7 @@ def api_scenario():
     # Step 2 — run weather pipeline (all 7 days → display + categories)
     weather = weather_pipeline(scene)
 
-    # Step 3 — extract TODAY's categories (index 1 — YESTERDAY is index 0)
+    # Step 3 — extract TODAY's display and categories (index 1 — YESTERDAY is index 0)
     today_display    = weather["days"][1]["display"]
     today_categories = weather["days"][1]["categories"]
 
@@ -169,8 +188,7 @@ def api_scenario():
         "text":    text,
     })
 
-
-# ── Entry point ──────────────────────────────────────────────────────────────
+# ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

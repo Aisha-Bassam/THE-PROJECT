@@ -1,7 +1,7 @@
 """
-app/backend/app.py
+app/backend/old_app.py
 ------------------
-Flask backend for WeatherFox prototype.
+Flask backend for WeatherFox prototype. TRIAL
 
 Exposes one route:
     GET /api/scenario
