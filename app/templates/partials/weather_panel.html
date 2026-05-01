@@ -1,107 +1,3 @@
-{# app/templates/partials/weather_panel.html #}
-{#
-  Shared weather panel — shown in both control and prototype views.
-  Parent container handles layout (full-width in control, left-col in prototype).
-  Populated by renderWeatherPanel(data) defined below.
-
-  DISSERTATION NOTE (Ch6 — Design):
-  Both views show identical weather data — same predictions, same icons,
-  same temperatures. The only difference is the presence of XAI elements
-  in the prototype view. This ensures any difference in user trust or
-  understanding can be attributed to the explainability layer, not the data.
-#}
-
-<div class="weather-panel" id="weatherPanel">
-
-  <div class="panel-label">Today's Forecast</div>
-
-  <div class="location-name">{{ location }}</div>
-  <div class="date-tag" id="wpDate">—</div>
-
-  <div class="wp-main-row">
-    <div class="wp-icon-wrap">
-      <div class="wp-icon" id="wpIcon">—</div>
-    </div>
-    <div class="wp-temps">
-      <div class="wp-temp-max" id="wpTempMax">—</div>
-      <div class="wp-temp-min" id="wpTempMin">—</div>
-    </div>
-  </div>
-
-  <div class="wp-label" id="wpLabel">—</div>
-
-</div>
-
-<style>
-  .weather-panel {
-    padding: 28px 28px 20px;
-  }
-
-  .panel-label {
-    font-size: 0.67rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-  }
-
-  .location-name {
-    font-family: 'Fraunces', serif;
-    font-size: 2rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-
-  .date-tag {
-    font-size: 0.76rem;
-    color: var(--text-dim);
-    font-weight: 300;
-    margin-top: 4px;
-    margin-bottom: 22px;
-  }
-
-  .wp-main-row {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 10px;
-  }
-
-  .wp-icon {
-    font-size: 4rem;
-    line-height: 1;
-  }
-
-  .wp-temps {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .wp-temp-max {
-    font-family: 'Fraunces', serif;
-    font-size: 3rem;
-    font-weight: 300;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    color: var(--fox-amber);
-  }
-
-  .wp-temp-min {
-    font-size: 1.1rem;
-    font-weight: 300;
-    color: #9FC8E8;
-  }
-
-  .wp-label {
-    font-size: 1rem;
-    color: var(--text-dim);
-    font-weight: 300;
-  }
-</style>
-
 <script>
   function renderWeatherPanel(data) {
     const today        = data.today;
@@ -131,5 +27,22 @@
 
     document.getElementById("wpLabel").textContent =
       today.label;
+
+    // ── Grouped detail data — consumed by control and prototype panels
+    window.wpRainGroup = {
+      mm:      today.rain_mm,
+      percent: today.rain_percent,
+    };
+
+    window.wpHumidityGroup = {
+      value: today.humidity,
+      name:  today.humidity_name,
+    };
+
+    window.wpWindGroup = {
+      speed: today.wind_speed,
+      dir:   today.wind_dir,
+      name:  today.wind_name,
+    };
   }
 </script>
