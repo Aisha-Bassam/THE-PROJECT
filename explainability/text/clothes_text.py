@@ -32,7 +32,7 @@ def clothes_text(outfit, today_json):
             Empty outfit → {"none": "Nothing special to wear today."}
     """
     if not outfit:
-        return {"none": "Nothing special to wear today."}
+        return {"fox_base": "Nothing special to wear today."}
 
     result = {}
 
@@ -74,6 +74,7 @@ def clothes_text(outfit, today_json):
 
         result[item] = " ".join(text_parts)
 
+    result["fox_base"] = outfit_text(result)    
     return result
 
 def first_name(text: str) -> str:
@@ -86,6 +87,8 @@ def first_name(text: str) -> str:
 def outfit_text(result):
     outfit = []
     for item, text in result.items():
+        if item == "fox_base":
+            return text
         outfit.append(first_name(text))
 
     if len(outfit) == 0:
@@ -135,7 +138,7 @@ if __name__ == "__main__":
 
     result = clothes_text(outfit, today_json)
 
-    print(outfit_text(result))
+    # print(outfit_text(result))
 
     for item, text in result.items():
         print(f"=== {item.upper()} ===")
