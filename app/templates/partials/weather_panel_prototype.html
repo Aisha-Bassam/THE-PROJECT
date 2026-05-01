@@ -135,11 +135,11 @@
   }
 
   /* Icon clickable in prototype */
-  #wpIcon {
+  #protoWpIcon {
     cursor: pointer;
     transition: transform 0.2s ease;
   }
-  #wpIcon:hover { transform: scale(1.1); }
+  #protoWpIcon:hover { transform: scale(1.1); }
 </style>
 
 <script>
@@ -171,7 +171,7 @@
     }
 
     // Wire icon click — prototype only
-    document.getElementById("wpIcon").addEventListener("click", (e) => {
+    document.getElementById("protoWpIcon").addEventListener("click", (e) => {
       e.stopPropagation();
       closeAllPopups();
       document.getElementById("weatherPopup").classList.add("visible");

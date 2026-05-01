@@ -1,48 +1,18 @@
-<script>
-  function renderWeatherPanel(data) {
-    const today        = data.today;
-    const scenarioDate = data.date;
+{# app/templates/partials/weather_panel.html #}
+{#
+  Shared weather panel — icon, temps, label, date.
+  Included in both control view (wp_prefix = "ctrl")
+  and prototype view (wp_prefix = "proto").
+  IDs are prefixed to avoid duplicates in the DOM.
+  Data is populated by renderWeatherPanel() in base.html.
+#}
 
-    // Derive TODAY's date (one day after YESTERDAY)
-    const dd   = scenarioDate.slice(0, 2);
-    const mm   = scenarioDate.slice(2, 4);
-    const yyyy = scenarioDate.slice(4);
-    const yesterday = new Date(`${yyyy}-${mm}-${dd}`);
-    const todayDate  = new Date(yesterday);
-    todayDate.setDate(yesterday.getDate() + 1);
-
-    document.getElementById("wpDate").textContent =
-      todayDate.toLocaleDateString("en-GB", {
-        weekday: "long", day: "numeric", month: "long", year: "numeric"
-      });
-
-    document.getElementById("wpIcon").textContent =
-      ICON_MAP[today.icon_label] || "🌤️";
-
-    document.getElementById("wpTempMax").textContent =
-      `${today.max_temp}°C`;
-
-    document.getElementById("wpTempMin").textContent =
-      `${today.min_temp}°C`;
-
-    document.getElementById("wpLabel").textContent =
-      today.label;
-
-    // ── Grouped detail data — consumed by control and prototype panels
-    window.wpRainGroup = {
-      mm:      today.rain_mm,
-      percent: today.rain_percent,
-    };
-
-    window.wpHumidityGroup = {
-      value: today.humidity,
-      name:  today.humidity_name,
-    };
-
-    window.wpWindGroup = {
-      speed: today.wind_speed,
-      dir:   today.wind_dir,
-      name:  today.wind_name,
-    };
-  }
-</script>
+<div class="wp-inner">
+  <div class="wp-date"    id="{{ wp_prefix }}WpDate">—</div>
+  <div class="wp-icon"    id="{{ wp_prefix }}WpIcon">🌤️</div>
+  <div class="wp-temps">
+    <span class="wp-temp-max" id="{{ wp_prefix }}WpTempMax">—</span>
+    <span class="wp-temp-min" id="{{ wp_prefix }}WpTempMin">—</span>
+  </div>
+  <div class="wp-label"   id="{{ wp_prefix }}WpLabel">—</div>
+</div>

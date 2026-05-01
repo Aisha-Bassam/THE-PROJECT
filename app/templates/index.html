@@ -1,16 +1,28 @@
 {# app/templates/index.html #}
-{# Extends base.html — fills in the two view blocks and wires render functions #}
 {% extends 'base.html' %}
 
+{% block styles %}
+<style>
+  .prototype-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+</style>
+{% endblock %}
 
-{# ── Control view ────────────────────────────────────────────────────── #}
+
+{# ── Control view ─────────────────────────────────────────────────────── #}
 {% block control_content %}
   <div class="card">
-    {% include 'partials/weather_panel.html' %}
+    {% with wp_prefix = "ctrl" %}
+      {% include 'partials/weather_panel.html' %}
+    {% endwith %}
   </div>
 {% endblock %}
 
-{# ── Below table — control detail widgets ────────────────────────────── #}
+{# ── Below table — control detail widgets ─────────────────────────────── #}
 {% block below_table %}
   <div id="controlDetails" style="display:none">
     {% include 'partials/weather_detail_control.html' %}
@@ -18,16 +30,18 @@
 {% endblock %}
 
 
-{# ── Prototype view ───────────────────────────────────────────────────── #}
+{# ── Prototype view ────────────────────────────────────────────────────── #}
 {% block prototype_content %}
   <div class="prototype-layout">
-    {% include 'partials/weather_panel_prototype.html' %}
+    {% with wp_prefix = "proto" %}
+      {% include 'partials/weather_panel_prototype.html' %}
+    {% endwith %}
     {% include 'partials/fox.html' %}
   </div>
 {% endblock %}
 
 
-{# ── View-specific scripts ────────────────────────────────────────────── #}
+{# ── View-specific scripts ─────────────────────────────────────────────── #}
 {% block scripts %}
 <script>
   /*
