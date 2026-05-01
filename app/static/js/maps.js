@@ -9,13 +9,13 @@ const ICON_MAP = {
 }
 
 const BACKGROUND_MAP = {
-    "sunny":         "#FFD700",
-    "mostly_sunny":  "#FFA500",
-    "mostly_cloudy": "#708090",
-    "light_rain":    "#4682B4",
-    "overcast":      "#556B2F",
-    "rainy":         "#1A2E45",
-    "windy":         "#5F9EA0",
+    "sunny":         "#4abaff",
+    "mostly_sunny":  "#3a9ad6",
+    "mostly_cloudy": "#4388b7",
+    "light_rain":    "#3677a3",
+    "overcast":      "#5186aa",
+    "rainy":         "#2d6081",
+    "windy":         "#649abf",
 }
 
 const FOX_LAYER_MAP = {
