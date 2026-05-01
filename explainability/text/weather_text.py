@@ -15,7 +15,7 @@ and secondary labels — each with SHAP and confidence for their driving columns
 
 from explainability.text.shap_translator import shap_translator
 from explainability.text.confidence_translator import confidence_translator
-from explainability.weather_mapper import labeller
+from explainability.weather_mapper import weather_mapper
 from rules import WEATHER_LABELS, SHORT_TO_DISPLAY, CATEGORY_TO_DISPLAY
 
 
@@ -128,11 +128,6 @@ if __name__ == "__main__":
         if short:
             categories[short] = threshold(short, val)
 
-    mapper_output = weather_mapper(categories)
-    print(f"Dominant: {mapper_output['dominant']}")
-    print(f"Secondary: {mapper_output['secondary']}")
-    print()
-
-    result = weather_text(today_json, mapper_output, categories)
+    result = weather_text(today_json, categories, "icon placeholder")
     print("=== Weather Text ===")
     print(result)

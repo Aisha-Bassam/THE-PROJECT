@@ -290,7 +290,7 @@ LAYER_ORDER = [
     "baseball_cap",   # before beanie — by design only one hat active at a time
     "beanie",         # over baseball cap if both somehow present (safety fallback)
     "sunglasses",     # order relative to hats does not matter visually
-    "wellies",        # ─┐
+    "welly",        # ─┐
     "umbrella",       #  │ always on top — never under anything
     "handfan",        # ─┘
 ]

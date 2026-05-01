@@ -30,7 +30,7 @@ def confidence_ranker(columns, prediction_json):
     Input:  columns (list)         — short names e.g. ["rain", "cloud"]
             prediction_json (dict) — loaded from load_prediction()
     Output: dict of deviating columns → "high" or "low"
-            e.g. {"rain": "low", "wind": "high"}
+            e.g. {"rain": "lower", "wind": "higher"}
             empty dict if no columns deviate significantly.
     """
     baseline      = confidence_tier(columns, prediction_json)["score"]

@@ -40,13 +40,13 @@
 
   function renderControl(data) {
     renderWeatherPanel(data);
-    renderControlDetails(data.today);
+    renderControlDetails();
   }
 
   function renderPrototype(data) {
     renderWeatherPanel(data);
     renderPrototypeDetails(data);
-    renderFox(data.fox);
+    renderFox(data);
   }
 </script>
 {% endblock %}

@@ -89,7 +89,7 @@ def shap_translator(prediction_json, columns):
         # Assemble snippet
         if len(parts) == 1:
             col_display = SHORT_TO_DISPLAY.get(column, column.capitalize())
-            snippet = f"{col_display.capitalize()} is predicted mainly due to..."
+            snippet = f"{col_display.capitalize()} is predicted mainly due to {parts[0]}."
         else:
             col_display = SHORT_TO_DISPLAY.get(column, column.capitalize())
             snippet = f"{col_display.capitalize()} is predicted mainly due to {parts[0]} and {', '.join(parts[1:])}."

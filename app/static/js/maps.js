@@ -35,7 +35,7 @@ const FOX_LAYER_MAP = {
     "baseball_cap": "baseball_cap.png",
     "beanie":       "beanie.png",
     "sunglasses":   "sunglasses.png",
-    "wellies":      "wellies.png",
+    "welly":        "welly.png",
     "umbrella":     "umbrella.png",
     "handfan":      "handfan.png",
 }
