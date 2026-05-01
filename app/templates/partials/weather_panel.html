@@ -8,11 +8,14 @@
 #}
 
 <div class="wp-inner">
-  <div class="wp-date"    id="{{ wp_prefix }}WpDate">—</div>
-  <div class="wp-icon"    id="{{ wp_prefix }}WpIcon">🌤️</div>
-  <div class="wp-temps">
-    <span class="wp-temp-max" id="{{ wp_prefix }}WpTempMax">—</span>
-    <span class="wp-temp-min" id="{{ wp_prefix }}WpTempMin">—</span>
+  <div class="panel-label">Today's Forecast</div>
+  <div class="wp-date" id="{{ wp_prefix }}WpDate">—</div>
+  <div class="wp-main-row">
+    <div class="wp-icon" id="{{ wp_prefix }}WpIcon">🌤️</div>
+    <div class="wp-temps">
+      <span class="wp-temp-max" id="{{ wp_prefix }}WpTempMax">—</span>
+      <span class="wp-temp-min" id="{{ wp_prefix }}WpTempMin">—</span>
+    </div>
   </div>
-  <div class="wp-label"   id="{{ wp_prefix }}WpLabel">—</div>
+  <div class="wp-label" id="{{ wp_prefix }}WpLabel">—</div>
 </div>
