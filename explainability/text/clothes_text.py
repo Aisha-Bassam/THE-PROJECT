@@ -141,8 +141,6 @@ if __name__ == "__main__":
 
     result = clothes_text(outfit, today_json)
 
-    # print(outfit_text(result))
-
     for item, text in result.items():
         print(f"=== {item.upper()} ===")
         print(text)

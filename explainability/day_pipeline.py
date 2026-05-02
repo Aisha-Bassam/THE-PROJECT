@@ -12,7 +12,7 @@ Used by weather_pipeline (all 7 days) and fox_pipeline (TODAY only).
 # same categorical values used to build the table.
 """
 
-from rules import SCENARIO_COLUMN_TO_SHORT  # replace COLUMN_TO_SHORT
+from rules import SCENARIO_COLUMN_TO_SHORT
 from explainability.thresholder import threshold
 from explainability.weather_mapper import weather_mapper, labeller
 from explainability.day_summary import day_summary

@@ -26,11 +26,7 @@ def emotion_generator(today_json):
     Generates the fox's emotional state for a given prediction.
 
     Input:  today_json (dict) — loaded TODAY_<date>.json
-    Output: dict with expression, label placeholder, change flag, changed columns
-
-    # DISSERTATION NOTE: (Ch4 - Methodology/Implementation)
-    # Label is a placeholder — will be replaced by Labeller output once
-    # Weather Mapper and Labeller are implemented.
+    Output: dict with expression, change flag, changed columns, changes dict
     """
     # Overall confidence — always all 7 columns for emotion
     all_columns = list(SHORT_TO_COLUMN.keys())

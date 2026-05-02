@@ -164,7 +164,6 @@ def save_scenario(scenario, location):
         serialisable[key] = scenario[key].to_dict(orient="records")[0]
 
     filename = f"SCENARIO_{scenario['Date']}_{location.lower()}.json"
-    # filename = f"SCENARIO_{serialisable['Date']}_{location.lower()}.json"
 
     filepath = os.path.join(OUTPUT_DIR, filename)
     with open(filepath, "w") as f:
