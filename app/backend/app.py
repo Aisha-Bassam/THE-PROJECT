@@ -67,7 +67,7 @@ def discover_scenarios():
     Output: sorted list of dicts — [{ date, location, label }, ...]
             date     — DDMMYYYY string   e.g. "01072023"
             location — lowercase string  e.g. "london"
-            label    — display string    e.g. "1 Jul 2023 · London"
+            label    — display string    e.g. "2 Jul 2023 · London"
     """
     pattern   = os.path.join(SCENARIOS_DIR, "SCENARIO_*.json")
     scenarios = []
@@ -83,7 +83,8 @@ def discover_scenarios():
         location = parts[2]
 
         parsed = pd.to_datetime(date, format="%d%m%Y")
-        label  = parsed.strftime("%-d %b %Y") + " · " + location.capitalize()
+        next_day = parsed + pd.Timedelta(days=1)          # add one day
+        label = next_day.strftime("%-d %b %Y") + " · " + location.capitalize()
 
         scenarios.append({"date": date, "location": location, "label": label})
 
