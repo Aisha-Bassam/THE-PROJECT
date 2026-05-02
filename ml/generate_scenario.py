@@ -254,6 +254,10 @@ if __name__ == "__main__":
         "2023-09-08",
         "2023-09-10",
         "2023-09-11",
+
+        # Winter — low confidence
+        "2023-01-01",
+        "2023-01-02",
     ]
 
     for date in scenarios:

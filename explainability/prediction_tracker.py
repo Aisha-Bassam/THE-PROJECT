@@ -20,13 +20,13 @@ from explainability.utils import extract_predictions, load_prediction
 # ── Change thresholds (per column) ────────────────────────────────────────────
 
 THRESHOLDS = {
-    "rain":     1.0,
-    "temp_min": 2.0,
-    "temp_max": 2.0,
-    "wind":     10.0,
-    "humidity": 10.0,
-    "cloud":    15.0,
-    "wind_dir": 45.0,
+    "rain":     2.0,
+    "temp_min": 5.0,
+    "temp_max": 5.0,
+    "wind":     13.0,
+    "humidity": 13.0,
+    "cloud":    25.0,
+    "wind_dir": 90.0,
 }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

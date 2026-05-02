@@ -87,6 +87,8 @@ def discover_scenarios():
 
         scenarios.append({"date": date, "location": location, "label": label})
 
+    # Sort by date (chronologically)
+    scenarios.sort(key=lambda x: pd.to_datetime(x['date'], format="%d%m%Y"))
     return scenarios
 
 
