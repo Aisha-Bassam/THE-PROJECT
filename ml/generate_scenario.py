@@ -223,28 +223,40 @@ def generate_seven_predictions(date, location):
     }
 
 
-# ── Demo ──────────────────────────────────────────────────────────────────────
+# ── scenarios ──────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    date     = "2023-07-01"
     location = "London"
 
-    print(f"Generating 7-day scenario for {location}, starting {date}...\n")
-    results = generate_seven_predictions(date, location)
+    scenarios = [
+        # Winter — high confidence drops next day
+        "2023-12-16",
+        "2023-12-17",
 
-    for key, value in results.items():
-        print(key)
-        print(value)
-        print()
+        # Spring — interesting outfit combos, sunglasses appear
+        "2023-05-25",
+        "2023-05-26",
 
+        # Summer — dramatic outfit flip, consistently high confidence
+        "2023-07-30",
+        "2023-07-31",
 
-    date     = "2023-07-02"
-    location = "London"
+        # Existing summer — prediction change already confirmed
+        "2023-07-01",
+        "2023-07-02",
 
-    print(f"Generating 7-day scenario for {location}, starting {date}...\n")
-    results = generate_seven_predictions(date, location)
+        # Autumn — consecutive low confidence, extreme outfit swing
+        "2023-10-09",
+        "2023-10-10",
+        "2023-10-11",
 
-    for key, value in results.items():
-        print(key)
-        print(value)
+        # Autumn — low confidence, outfit shift across days
+        "2023-09-08",
+        "2023-09-10",
+        "2023-09-11",
+    ]
+
+    for date in scenarios:
+        print(f"\nGenerating 7-day scenario for {location}, starting {date}...")
+        generate_seven_predictions(date, location)
         print()

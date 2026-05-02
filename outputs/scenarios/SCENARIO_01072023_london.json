@@ -62,12 +62,12 @@
     "humidity %": 77.01779286579871,
     "cloud_cover %": 58.439021516629765,
     "wind_speed km/h": 17.498021941440392,
-    "wind_direction_numerical": 216.58074324144735,
+    "wind_direction_numerical": 216.58074324144738,
     "day_of_year": 187,
     "location_code": 355
   },
   "SEVEN": {
-    "min_temp \u00b0c": 11.207287109003587,
+    "min_temp \u00b0c": 11.20728710900359,
     "max_temp \u00b0c": 18.124146790097456,
     "rain mm": 2.3832490231239225,
     "humidity %": 78.58279694331182,
