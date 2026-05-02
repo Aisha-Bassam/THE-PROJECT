@@ -99,7 +99,7 @@
     color: var(--text-white);
   }
 
-  /* Fox popup — floats left of the stack */
+  /* Fox popup — floats left of the stack on desktop */
   #foxPopup {
     width: 240px;
     position: absolute;
@@ -117,6 +117,20 @@
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
     border-left: 8px solid var(--popup-bg);
+  }
+
+  @media (max-width: 700px) {
+    #foxPopup {
+      position: fixed;
+      right: auto;
+      top: auto;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(88vw, 300px);
+      z-index: 500;
+    }
+    #foxPopup::after { display: none; }
   }
 </style>
 

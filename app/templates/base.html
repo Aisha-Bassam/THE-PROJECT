@@ -381,8 +381,58 @@
 
     /* ─── Responsive ─────────────────────────────────────────────────── */
     @media (max-width: 700px) {
-      .main-content { padding: 20px 16px 48px; }
-      .sidebar { width: 180px; }
+      /* Sidebar becomes a horizontal scroll strip at the top */
+      .app-body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 10px 14px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-shrink: 0;
+      }
+
+      .sidebar.collapsed {
+        width: 100%;
+        padding: 10px 14px;
+        overflow: visible;
+      }
+
+      .sidebar-toggle { display: none; }
+
+      .sidebar-label { display: none; }
+
+      .sidebar.collapsed .sidebar-label,
+      .sidebar.collapsed .scenario-list {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .scenario-list {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .scenario-btn { flex-shrink: 0; }
+
+      /* Main content */
+      .main-content { padding: 16px 14px 40px; }
+
+      /* Header toggle — tighter on small screens */
+      .toggle-btn { padding: 6px 10px; font-size: 0.73rem; }
+
+      /* Forecast table — horizontal scroll so it never wraps */
+      .forecast-card { overflow-x: auto; }
+
+      .forecast-table { min-width: 380px; }
+
+      .forecast-table thead th,
+      .forecast-table tbody td { padding: 10px 14px; }
     }
 
     /* ─── Weather panel shared elements ─────────────────────────────── */
