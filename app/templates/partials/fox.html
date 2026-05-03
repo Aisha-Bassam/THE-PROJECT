@@ -146,6 +146,7 @@
     const stack   = document.getElementById("foxStack");
     const pills   = document.getElementById("foxPills");
     const layers  = data.fox.layers;
+    const change  = data.fox.change;
     const clothes = data.text.clothes;
     const emotion = data.text.emotion;
 
@@ -163,7 +164,9 @@
     layers.forEach(layerName => {
       const pill = document.createElement("button");
       pill.className = "fox-pill";
-      pill.textContent = pillLabel(layerName);
+      pill.textContent = (layerName === "apologetic")
+        ? (change ? "Apologetic" : "Uncertain")
+        : pillLabel(layerName);
 
       pill.addEventListener("click", (e) => {
         e.stopPropagation();

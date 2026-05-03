@@ -187,7 +187,7 @@ def api_scenario():
         "date":    weather["date"],
         "today":   today_display,
         "weather": weather["days"],
-        "fox":     {"layers": layers},
+        "fox":     {"layers": layers, "change": emotion["change"]},
         "text":    text,
     })
 
