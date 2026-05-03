@@ -44,7 +44,7 @@ def clothes_text(outfit, today_json):
             display = SHORT_TO_DISPLAY.get(col, col)
             parts.append(f"{category} {display}")
 
-        because_sentence = f"\n{item.capitalize()}: {', '.join(parts)} expected today.\n"
+        because_sentence = f"{item.capitalize()}: {', '.join(parts)} expected today.\n"
 
         # Step 2 — Option C filter: key columns ∩ driving categories
         key_columns = CLOTHING_KEY_COLUMNS.get(item, [])
