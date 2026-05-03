@@ -167,9 +167,25 @@
   /* Icon clickable in prototype */
   #protoWpIcon {
     cursor: pointer;
-    transition: transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
   }
-  #protoWpIcon:hover { transform: scale(1.1); }
+  #protoWpIcon:hover {
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: scale(1.07);
+  }
+  #protoWpIcon:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.18);
+  }
 </style>
 
 <script>

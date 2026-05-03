@@ -16,6 +16,9 @@
 
   <div class="fox-prompt">Tap a piece to find out why</div>
 
+  <!-- Emotion pill — sits above fox -->
+  <div class="fox-pills" id="foxEmotionPills" style="margin-bottom:14px;margin-top:0;"></div>
+
   <!-- Fox layer stack — PNGs only, no click overlays -->
   <div class="fox-stack-wrap">
     <div class="fox-stack" id="foxStack"></div>
@@ -143,8 +146,9 @@
   }
 
   function renderFox(data) {
-    const stack   = document.getElementById("foxStack");
-    const pills   = document.getElementById("foxPills");
+    const stack        = document.getElementById("foxStack");
+    const pills        = document.getElementById("foxPills");
+    const emotionPills = document.getElementById("foxEmotionPills");
     const layers  = data.fox.layers;
     const change  = data.fox.change;
     const clothes = data.text.clothes;
@@ -159,8 +163,9 @@
       stack.appendChild(img);
     });
 
-    // Build pills — one per layer, click opens popup
+    // Build pills — emotion above fox, clothes below
     pills.innerHTML = "";
+    emotionPills.innerHTML = "";
     layers.forEach(layerName => {
       const pill = document.createElement("button");
       pill.className = "fox-pill";
@@ -191,7 +196,8 @@
         document.getElementById("foxPopup").classList.add("visible");
       });
 
-      pills.appendChild(pill);
+      const isEmotion = EMOTION_LAYERS.has(layerName);
+      (isEmotion ? emotionPills : pills).appendChild(pill);
     });
   }
 </script>
